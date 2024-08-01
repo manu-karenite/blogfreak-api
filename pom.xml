@@ -21,9 +21,8 @@
     <developer></developer>
   </developers>
   <scm>
-    <connection>scm:git:git://github.com:manu-karenite/blogfreak-api.git</connection>
-    <developerConnection>scm:git:ssh://github.com:manu-karenite/blogfreak-api.git</developerConnection>
-    <tag>blog-freak-api-0.0.1</tag>
+    <connection>scm:git:git://github.com/manu-karenite/blogfreak-api.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/manu-karenite/blogfreak-api.git</developerConnection>
     <url>https://github.com/manu-karenite/blogfreak-api</url>
   </scm>
   <properties>
