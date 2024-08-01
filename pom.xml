@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.blogfreak</groupId>
   <artifactId>blog-freak-api</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>blog-freak-api</name>
   <description>API for blogfreak</description>
   <url></url>
@@ -21,8 +21,8 @@
     <developer></developer>
   </developers>
   <scm>
-    <connection>scm:git:git://github.com:manu-karenite/blogfreak-api.git</connection>
-    <developerConnection>scm:git:ssh://github.com:manu-karenite/blogfreak-api.git</developerConnection>
+    <connection>scm:git:git://github.com/manu-karenite/blogfreak-api.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/manu-karenite/blogfreak-api.git</developerConnection>
     <url>https://github.com/manu-karenite/blogfreak-api</url>
   </scm>
   <properties>
