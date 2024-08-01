@@ -1,0 +1,10 @@
+HTTP METHOD      ENDPOINT           QUERY PARAM           PATH PARAM           BODY
+------ PHASE 1 ------
+GET              /bloggers
+GET              /bloggers/{bloggerId}                     ID
+POST             /bloggers                                                     [FIRST_NAME,LAST_NAME,EMAIL_ID,GENDER,PASSWORD]
+PATCH            /bloggers/{bloggerId}                                         [FIRST_NAME,LAST_NAME,GENDER]
+PATCH            /bloggers/{bloggerId}/password            ID                  [PASSWORD]
+
+------ PHASE 2 ------
+DELETE           /bloggers/{bloggerId}                     ID

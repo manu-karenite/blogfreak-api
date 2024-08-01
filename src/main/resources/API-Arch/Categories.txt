@@ -1,0 +1,7 @@
+HTTP METHOD      ENDPOINT           QUERY PARAM           PATH PARAM           BODY
+------ PHASE 1 ------
+GET              /categories
+GET              /categories/{categoryId}                  ID
+POST             /categories                                                   NAME
+DELETE           /categories/{categoryId}                  ID
+PATCH            /categories/{categoryId}                                      NAME
