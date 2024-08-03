@@ -18,11 +18,15 @@ public class OASTags {
         tag3.setName("Blogs");
         tag3.setDescription("API Endpoints related to blogs");
 
+        Tag tag4 = new Tag();
+        tag4.setName("Health Check");
+        tag4.setDescription("API Endpoints related to service health check");
+
         List<Tag> listOfTags = new ArrayList<>();
         listOfTags.add(tag1);
         listOfTags.add(tag2);
         listOfTags.add(tag3);
-
+        listOfTags.add(tag4);
         return listOfTags;
     }
 }

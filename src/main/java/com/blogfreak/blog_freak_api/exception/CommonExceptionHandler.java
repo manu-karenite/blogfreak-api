@@ -38,6 +38,13 @@ public class CommonExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<GlobalExceptionResponse> handleHealthCheckFailException(HealthCheckFail e) {
+        GlobalExceptionResponse globalExceptionResponse =
+                new GlobalExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        return new ResponseEntity<>(globalExceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<GlobalExceptionResponse> genericException(Exception e) {
         GlobalExceptionResponse globalExceptionResponse =
                 new GlobalExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
