@@ -24,6 +24,13 @@ public class CommonExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<GlobalExceptionResponse> handleResponseForBlogNotFound(BlogNotFound e) {
+        GlobalExceptionResponse globalExceptionResponse =
+                new GlobalExceptionResponse(HttpStatus.NOT_FOUND, e.getMessage());
+        return new ResponseEntity<>(globalExceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<GlobalExceptionResponse> handleResponseForInvalidGender(InvalidGender e) {
         GlobalExceptionResponse globalExceptionResponse =
                 new GlobalExceptionResponse(HttpStatus.BAD_REQUEST, e.getMessage());

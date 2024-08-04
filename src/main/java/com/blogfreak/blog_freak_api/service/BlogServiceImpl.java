@@ -19,4 +19,9 @@ public class BlogServiceImpl implements BlogService {
     public List<Blog> getAllBlogs() {
         return blogsDAOImpl.getAllBlogs();
     }
+
+    @Override
+    public Blog getBlogById(String blogId) {
+        return blogsDAOImpl.getBlogById(blogId);
+    }
 }
