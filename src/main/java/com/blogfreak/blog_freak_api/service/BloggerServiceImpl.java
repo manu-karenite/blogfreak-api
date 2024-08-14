@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,11 +24,15 @@ public class BloggerServiceImpl implements BloggerService {
     BloggerDAO bloggerDAO;
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
     AuthorityDAO authorityDAO;
 
-    public BloggerServiceImpl(BloggerDAO bloggerDAO, AuthorityDAO authorityDAO) {
+    public BloggerServiceImpl(BloggerDAO bloggerDAO, AuthorityDAO authorityDAO, PasswordEncoder passwordEncoder) {
         this.bloggerDAO = bloggerDAO;
         this.authorityDAO = authorityDAO;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -52,7 +57,7 @@ public class BloggerServiceImpl implements BloggerService {
         }
         blogger.setEmailId(createBloggerDTORequest.getEmailId());
         blogger.setGender(createBloggerDTORequest.getGender());
-        blogger.setPassword(createBloggerDTORequest.getPassword());
+        blogger.setPassword(passwordEncoder.encode(createBloggerDTORequest.getPassword()));
         return bloggerDAO.createBlogger(blogger);
     }
 
