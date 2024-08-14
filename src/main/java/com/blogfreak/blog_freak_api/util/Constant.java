@@ -8,6 +8,8 @@ public class Constant {
     public static final String AUTHORITY_WRITE = "WRITE";
     public static final String AUTHORITY_DELETE = "DELETE";
     public static final String AUTHORITY_ADMIN = "ADMIN";
+    public static final String AUTHORITIES = "authorities";
+    public static final String AUTHORITY = "authority";
     // B
     public static final String BLOGGER = "blogger";
     public static final String BLOGGERS = "bloggers";
@@ -40,5 +42,6 @@ public class Constant {
     public static final String TITLE = "TITLE";
     // U
     public static final String UPDATED_AT = "UPDATED_AT";
+    public static final String USER_ID = "USER_ID";
     public static final String URL_ATTACHMENT = "URL_ATTACHMENT";
 }

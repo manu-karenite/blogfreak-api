@@ -3,6 +3,7 @@ package com.blogfreak.blog_freak_api.controller;
 import com.blogfreak.blog_freak_api.dto.CreateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerPasswordDTO;
+import com.blogfreak.blog_freak_api.entity.Blogger;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception400;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception404;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception500;
@@ -91,9 +92,10 @@ public class BloggerController {
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> createBlogger(@Valid @RequestBody CreateBloggerDTO createBloggerDTO) {
+        Blogger blogger = bloggerService.createBlogger(createBloggerDTO);
+        Blogger refreshedBlogger = bloggerService.getBloggerById(blogger.getId());
         return new ResponseEntity<>(
-                new GlobalResponseEntity<>(HttpStatus.CREATED, bloggerService.createBlogger(createBloggerDTO)),
-                HttpStatus.CREATED);
+                new GlobalResponseEntity<>(HttpStatus.CREATED, refreshedBlogger), HttpStatus.CREATED);
     }
 
     @PatchMapping("/bloggers/{bloggerId}")
