@@ -37,7 +37,8 @@ public class BloggerServiceImpl implements BloggerService {
 
     @Override
     public Blogger getBloggerById(String bloggerId) {
-        return bloggerDAO.getBloggerById(bloggerId);
+        Blogger blogger = bloggerDAO.getBloggerById(bloggerId);
+        return blogger;
     }
 
     @Transactional
@@ -56,18 +57,22 @@ public class BloggerServiceImpl implements BloggerService {
     }
 
     @Transactional
+    private Blogger createAuthoritiesForBloggerHelper(Blogger blogger) {
+        Authority authority =
+                new Authority(UUID.randomUUID().toString().substring(0, 30), blogger, Constant.AUTHORITY_READ);
+        this.authorityDAO.createAuthority(authority);
+        authority = new Authority(UUID.randomUUID().toString().substring(0, 30), blogger, Constant.AUTHORITY_WRITE);
+        this.authorityDAO.createAuthority(authority);
+        authority = new Authority(UUID.randomUUID().toString().substring(0, 30), blogger, Constant.AUTHORITY_DELETE);
+        this.authorityDAO.createAuthority(authority);
+        return blogger;
+    }
+
+    @Transactional
     @Override
     public Blogger createBlogger(CreateBloggerDTO createBloggerDTORequest) {
         Blogger blogger = createBloggerHelper(createBloggerDTORequest);
-        Authority authority =
-                new Authority(UUID.randomUUID().toString().substring(0, 30), blogger.getId(), Constant.AUTHORITY_READ);
-        this.authorityDAO.createAuthority(authority);
-        authority =
-                new Authority(UUID.randomUUID().toString().substring(0, 30), blogger.getId(), Constant.AUTHORITY_WRITE);
-        this.authorityDAO.createAuthority(authority);
-        authority = new Authority(
-                UUID.randomUUID().toString().substring(0, 30), blogger.getId(), Constant.AUTHORITY_DELETE);
-        this.authorityDAO.createAuthority(authority);
+        blogger = createAuthoritiesForBloggerHelper(blogger);
         return blogger;
     }
 

@@ -26,6 +26,7 @@ public class BloggerDAOImpl implements BloggerDAO {
 
     @Override
     public Blogger getBloggerById(String bloggerId) {
+        entityManager.clear();
         Blogger blogger = entityManager.find(Blogger.class, bloggerId);
         if (blogger == null)
             throw new BloggerNotFound(String.format("Blogger with id : [%s] does not exist", bloggerId));
