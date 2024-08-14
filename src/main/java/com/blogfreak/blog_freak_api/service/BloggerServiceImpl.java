@@ -10,9 +10,9 @@ import com.blogfreak.blog_freak_api.entity.Blogger;
 import com.blogfreak.blog_freak_api.exception.InvalidPatchBlogger;
 import com.blogfreak.blog_freak_api.util.Constant;
 import com.blogfreak.blog_freak_api.util.EnumValidation;
+import com.blogfreak.blog_freak_api.util.StringUtility;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,7 +49,7 @@ public class BloggerServiceImpl implements BloggerService {
     @Transactional
     private Blogger createBloggerHelper(CreateBloggerDTO createBloggerDTORequest) {
         Blogger blogger = new Blogger();
-        blogger.setId(String.valueOf(System.currentTimeMillis()));
+        blogger.setId(StringUtility.generateIdForEntity());
         blogger.setFirstName(createBloggerDTORequest.getFirstName());
         // LastName is optional
         if (StringUtils.isEmpty(createBloggerDTORequest.getLastName())) {
@@ -63,12 +63,11 @@ public class BloggerServiceImpl implements BloggerService {
 
     @Transactional
     private Blogger createAuthoritiesForBloggerHelper(Blogger blogger) {
-        Authority authority =
-                new Authority(UUID.randomUUID().toString().substring(0, 30), blogger, Constant.AUTHORITY_READ);
+        Authority authority = new Authority(StringUtility.generateIdForEntity(), blogger, Constant.AUTHORITY_READ);
         this.authorityDAO.createAuthority(authority);
-        authority = new Authority(UUID.randomUUID().toString().substring(0, 30), blogger, Constant.AUTHORITY_WRITE);
+        authority = new Authority(StringUtility.generateIdForEntity(), blogger, Constant.AUTHORITY_WRITE);
         this.authorityDAO.createAuthority(authority);
-        authority = new Authority(UUID.randomUUID().toString().substring(0, 30), blogger, Constant.AUTHORITY_DELETE);
+        authority = new Authority(StringUtility.generateIdForEntity(), blogger, Constant.AUTHORITY_DELETE);
         this.authorityDAO.createAuthority(authority);
         return blogger;
     }
