@@ -4,6 +4,10 @@ public class Constant {
     private Constant() {}
 
     // A
+    public static final String AUTHORITY_READ = "READ";
+    public static final String AUTHORITY_WRITE = "WRITE";
+    public static final String AUTHORITY_DELETE = "DELETE";
+    public static final String AUTHORITY_ADMIN = "ADMIN";
     // B
     public static final String BLOGGER = "blogger";
     public static final String BLOGGERS = "bloggers";
