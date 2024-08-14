@@ -1,14 +1,18 @@
 package com.blogfreak.blog_freak_api.service;
 
+import com.blogfreak.blog_freak_api.dao.AuthorityDAO;
 import com.blogfreak.blog_freak_api.dao.BloggerDAO;
 import com.blogfreak.blog_freak_api.dto.CreateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerPasswordDTO;
+import com.blogfreak.blog_freak_api.entity.Authority;
 import com.blogfreak.blog_freak_api.entity.Blogger;
 import com.blogfreak.blog_freak_api.exception.InvalidPatchBlogger;
+import com.blogfreak.blog_freak_api.util.Constant;
 import com.blogfreak.blog_freak_api.util.EnumValidation;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +22,12 @@ public class BloggerServiceImpl implements BloggerService {
     @Autowired
     BloggerDAO bloggerDAO;
 
-    public BloggerServiceImpl(BloggerDAO bloggerDAO) {
+    @Autowired
+    AuthorityDAO authorityDAO;
+
+    public BloggerServiceImpl(BloggerDAO bloggerDAO, AuthorityDAO authorityDAO) {
         this.bloggerDAO = bloggerDAO;
+        this.authorityDAO = authorityDAO;
     }
 
     @Override
@@ -33,8 +41,7 @@ public class BloggerServiceImpl implements BloggerService {
     }
 
     @Transactional
-    @Override
-    public Blogger createBlogger(CreateBloggerDTO createBloggerDTORequest) {
+    private Blogger createBloggerHelper(CreateBloggerDTO createBloggerDTORequest) {
         Blogger blogger = new Blogger();
         blogger.setId(String.valueOf(System.currentTimeMillis()));
         blogger.setFirstName(createBloggerDTORequest.getFirstName());
@@ -46,6 +53,22 @@ public class BloggerServiceImpl implements BloggerService {
         blogger.setGender(createBloggerDTORequest.getGender());
         blogger.setPassword(createBloggerDTORequest.getPassword());
         return bloggerDAO.createBlogger(blogger);
+    }
+
+    @Transactional
+    @Override
+    public Blogger createBlogger(CreateBloggerDTO createBloggerDTORequest) {
+        Blogger blogger = createBloggerHelper(createBloggerDTORequest);
+        Authority authority =
+                new Authority(UUID.randomUUID().toString().substring(0, 30), blogger.getId(), Constant.AUTHORITY_READ);
+        this.authorityDAO.createAuthority(authority);
+        authority =
+                new Authority(UUID.randomUUID().toString().substring(0, 30), blogger.getId(), Constant.AUTHORITY_WRITE);
+        this.authorityDAO.createAuthority(authority);
+        authority = new Authority(
+                UUID.randomUUID().toString().substring(0, 30), blogger.getId(), Constant.AUTHORITY_DELETE);
+        this.authorityDAO.createAuthority(authority);
+        return blogger;
     }
 
     @Transactional
