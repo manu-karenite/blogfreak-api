@@ -52,6 +52,13 @@ public class CommonExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<GlobalExceptionResponse> unauthorizedExceptionResponse(UnauthorizedException e) {
+        GlobalExceptionResponse globalExceptionResponse =
+                new GlobalExceptionResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
+        return new ResponseEntity<>(globalExceptionResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<GlobalExceptionResponse> genericException(Exception e) {
         GlobalExceptionResponse globalExceptionResponse =
                 new GlobalExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

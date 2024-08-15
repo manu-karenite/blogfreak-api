@@ -6,6 +6,10 @@ import java.util.List;
 
 public class OASTags {
     public List<Tag> getOASTags() {
+        Tag tag0 = new Tag();
+        tag0.setName("Authentication");
+        tag0.setDescription("API Endpoints related to authentication");
+
         Tag tag1 = new Tag();
         tag1.setName("Bloggers");
         tag1.setDescription("API Endpoints related to bloggers");
@@ -23,6 +27,7 @@ public class OASTags {
         tag4.setDescription("API Endpoints related to service health check");
 
         List<Tag> listOfTags = new ArrayList<>();
+        listOfTags.add(tag0);
         listOfTags.add(tag1);
         listOfTags.add(tag2);
         listOfTags.add(tag3);

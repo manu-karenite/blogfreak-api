@@ -34,6 +34,18 @@ public class BloggerDAOImpl implements BloggerDAO {
     }
 
     @Override
+    public Blogger getBloggerByEmail(String bloggerEmail) {
+        entityManager.clear();
+        TypedQuery<Blogger> query =
+                entityManager.createQuery("from Blogger where emailId=:bloggerEmail", Blogger.class);
+        query.setParameter("bloggerEmail", bloggerEmail);
+        List<Blogger> listOfBloggers = query.getResultList();
+        if (listOfBloggers == null || listOfBloggers.size() == 0)
+            throw new BloggerNotFound(String.format("Blogger with email : [%s] does not exist", bloggerEmail));
+        return listOfBloggers.get(0);
+    }
+
+    @Override
     public Blogger createBlogger(Blogger blogger) {
         entityManager.persist(blogger);
         return blogger;
