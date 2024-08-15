@@ -3,6 +3,8 @@ package com.blogfreak.blog_freak_api.controller;
 import com.blogfreak.blog_freak_api.dto.LoginDTO;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception400;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception401;
+import com.blogfreak.blog_freak_api.oas.schema.error.Exception404;
+import com.blogfreak.blog_freak_api.oas.schema.error.Exception500;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessLogin;
 import com.blogfreak.blog_freak_api.service.AuthenticationService;
 import com.blogfreak.blog_freak_api.service.AuthenticationServiceImpl;
@@ -57,6 +59,12 @@ public class AuthenticationController {
     @ApiResponse(
             responseCode = "401",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> loginUser(@Validated @RequestBody LoginDTO loginDTO) {
         Authentication authentication =
                 UsernamePasswordAuthenticationToken.unauthenticated(loginDTO.getEmailId(), loginDTO.getPassword());
