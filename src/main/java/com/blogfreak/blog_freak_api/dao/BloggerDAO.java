@@ -8,6 +8,8 @@ public interface BloggerDAO {
 
     public Blogger getBloggerById(String bloggerId);
 
+    Blogger getBloggerByEmail(String bloggerEmail);
+
     public Blogger createBlogger(Blogger blogger);
 
     public Blogger updateBlogger(Blogger blogger, String bloggerId);

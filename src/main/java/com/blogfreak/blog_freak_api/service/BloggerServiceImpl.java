@@ -46,6 +46,10 @@ public class BloggerServiceImpl implements BloggerService {
         return blogger;
     }
 
+    public Blogger getBloggerByEmail(String bloggerEmail) {
+        return this.bloggerDAO.getBloggerByEmail(bloggerEmail);
+    }
+
     @Transactional
     private Blogger createBloggerHelper(CreateBloggerDTO createBloggerDTORequest) {
         Blogger blogger = new Blogger();

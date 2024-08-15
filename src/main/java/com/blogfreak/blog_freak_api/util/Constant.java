@@ -4,13 +4,16 @@ public class Constant {
     private Constant() {}
 
     // A
+    public static final String APPLICATION_NAME = "blog-freak-api";
     public static final String AUTHORITY_READ = "READ";
     public static final String AUTHORITY_WRITE = "WRITE";
     public static final String AUTHORITY_DELETE = "DELETE";
     public static final String AUTHORITY_ADMIN = "ADMIN";
     public static final String AUTHORITIES = "authorities";
     public static final String AUTHORITY = "authority";
+    public static final String AUTHORIZATION = "Authorization";
     // B
+    public static final String BEARER = "Bearer";
     public static final String BLOGGER = "blogger";
     public static final String BLOGGERS = "bloggers";
     public static final String BLOGS = "blogs";
@@ -22,14 +25,18 @@ public class Constant {
     public static final String CONTENT = "CONTENT";
     public static final String CREATED_AT = "CREATED_AT";
     public static final String CREATED_BY_USER = "CREATED_BY_USER";
+    public static final String COMMA = ",";
     // E
     public static final String EMAIL_ID = "EMAIL_ID";
+    public static final String EMAILID = "emailId";
     // F
     public static final String FIRST_NAME = "FIRST_NAME";
     // G
     public static final String GENDER = "GENDER";
     // I
     public static final String ID = "ID";
+    // J
+    public static final String JWT_SECRET_SALT = "JWT_SECRET_SALT";
     // L
     public static final String LAST_NAME = "LAST_NAME";
     // N
