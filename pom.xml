@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.blogfreak</groupId>
   <artifactId>blog-freak-api</artifactId>
-  <version>0.0.6</version>
+  <version>0.0.7</version>
   <name>blog-freak-api</name>
   <description>API for blogfreak</description>
   <url></url>
