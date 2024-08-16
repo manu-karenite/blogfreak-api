@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,7 @@ public class HealthCheckController {
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     @Tag(name = "Health Check")
+    @SecurityRequirements(value = {})
     public ResponseEntity<GlobalResponseEntity> getServiceVersion() {
         return new ResponseEntity<>(
                 new GlobalResponseEntity(HttpStatus.OK, healthCheckServiceImpl.getServiceVersion()), HttpStatus.OK);
