@@ -25,6 +25,6 @@ public class JWTUtils {
     }
 
     public static Date getJwtExpiryDate() {
-        return new Date(new Date().getTime() + 24 * 60 * 60 * 1000L);
+        return new Date(new Date().getTime() + 1 * 60 * 60 * 1000L);
     }
 }

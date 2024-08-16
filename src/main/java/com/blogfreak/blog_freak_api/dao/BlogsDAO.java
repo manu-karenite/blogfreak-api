@@ -7,4 +7,6 @@ public interface BlogsDAO {
     public List<Blog> getAllBlogs();
 
     public Blog getBlogById(String blogId);
+
+    public Blog createBlog(Blog blog);
 }
