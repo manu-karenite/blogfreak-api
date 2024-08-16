@@ -11,6 +11,8 @@ public class OpenApiConfig {
         OpenAPI openAPI = new OpenAPI();
         openAPI.info(new OASInfo().renderOASInfo());
         openAPI.setTags(new OASTags().getOASTags());
+        openAPI.setComponents(new OASComponents().getSecurityJWTComponent());
+        openAPI.setSecurity(new OASSecurity().getSecurityRequirement());
         return openAPI;
     }
 }
