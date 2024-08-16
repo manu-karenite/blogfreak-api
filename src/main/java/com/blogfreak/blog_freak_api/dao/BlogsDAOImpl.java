@@ -26,8 +26,15 @@ public class BlogsDAOImpl implements BlogsDAO {
 
     @Override
     public Blog getBlogById(String blogId) {
+        entityManager.clear();
         Blog blog = entityManager.find(Blog.class, blogId);
         if (blog == null) throw new BlogNotFound(String.format("Blog with id %s not found", blogId));
+        return blog;
+    }
+
+    @Override
+    public Blog createBlog(Blog blog) {
+        this.entityManager.persist(blog);
         return blog;
     }
 }

@@ -46,6 +46,13 @@ public class AppSecurityConfig {
                 .hasAuthority(Constant.AUTHORITY_READ)
                 .requestMatchers(HttpMethod.GET, "/categories")
                 .hasAuthority(Constant.AUTHORITY_READ)
+                // -------------------------------- Blog Related Endpoint -------------------------------- //
+                .requestMatchers(HttpMethod.POST, "/blogs")
+                .hasAuthority(Constant.AUTHORITY_WRITE)
+                .requestMatchers(HttpMethod.GET, "/blogs/**")
+                .hasAuthority(Constant.AUTHORITY_READ)
+                .requestMatchers(HttpMethod.GET, "/blogs")
+                .hasAuthority(Constant.AUTHORITY_READ)
                 // -------------------------------- Health Check Related Endpoint -------------------------------- //
                 .requestMatchers(HttpMethod.GET, "/healthcheck")
                 .permitAll()
