@@ -1,12 +1,11 @@
 package com.blogfreak.blog_freak_api.security;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 import com.blogfreak.blog_freak_api.util.Constant;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +20,37 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class AppSecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll());
+        http.authorizeHttpRequests((requests) -> requests.requestMatchers(
+                        "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**")
+                .permitAll()
+                // -------------------------------- Authentication Related Endpoint -------------------------------- //
+                .requestMatchers(HttpMethod.POST, "/login")
+                .permitAll()
+                // -------------------------------- Blogger Related Endpoint -------------------------------- //
+                .requestMatchers(HttpMethod.PATCH, "/bloggers/**")
+                .hasAuthority(Constant.AUTHORITY_MANAGE)
+                .requestMatchers(HttpMethod.GET, "/bloggers/**")
+                .hasAuthority(Constant.AUTHORITY_READ)
+                .requestMatchers(HttpMethod.GET, "/bloggers")
+                .hasAuthority(Constant.AUTHORITY_READ)
+                .requestMatchers(HttpMethod.POST, "/bloggers")
+                .permitAll()
+                // -------------------------------- Category Related Endpoint -------------------------------- //
+                .requestMatchers(HttpMethod.POST, "/categories")
+                .hasAuthority(Constant.AUTHORITY_ADMIN)
+                .requestMatchers(HttpMethod.DELETE, "/categories/**")
+                .hasAuthority(Constant.AUTHORITY_ADMIN)
+                .requestMatchers(HttpMethod.PATCH, "/categories/**")
+                .hasAuthority(Constant.AUTHORITY_ADMIN)
+                .requestMatchers(HttpMethod.GET, "/categories/**")
+                .hasAuthority(Constant.AUTHORITY_READ)
+                .requestMatchers(HttpMethod.GET, "/categories")
+                .hasAuthority(Constant.AUTHORITY_READ)
+                // -------------------------------- Health Check Related Endpoint -------------------------------- //
+                .requestMatchers(HttpMethod.GET, "/healthcheck")
+                .permitAll()
+                .anyRequest()
+                .authenticated());
         http.csrf(csrf -> csrf.disable());
         http.cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
             @Override
@@ -37,8 +66,9 @@ public class AppSecurityConfig {
             }
         }));
         http.formLogin(flc -> flc.disable());
-        http.httpBasic(withDefaults());
         http.addFilterBefore(new JWTVerificationFilter(), BasicAuthenticationFilter.class);
+        http.exceptionHandling(ex -> ex.accessDeniedHandler(new BlogFreakAccessDeniedHandler()));
+        http.exceptionHandling(ex -> ex.authenticationEntryPoint(new BlogFreakAuthEntryPoint()));
         return http.build();
     }
 

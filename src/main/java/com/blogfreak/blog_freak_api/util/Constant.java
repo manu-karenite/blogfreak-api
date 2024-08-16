@@ -8,6 +8,7 @@ public class Constant {
     public static final String AUTHORITY_READ = "READ";
     public static final String AUTHORITY_WRITE = "WRITE";
     public static final String AUTHORITY_DELETE = "DELETE";
+    public static final String AUTHORITY_MANAGE = "MANAGE";
     public static final String AUTHORITY_ADMIN = "ADMIN";
     public static final String AUTHORITIES = "authorities";
     public static final String AUTHORITY = "authority";

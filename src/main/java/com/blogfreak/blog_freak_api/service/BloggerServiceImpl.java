@@ -73,6 +73,8 @@ public class BloggerServiceImpl implements BloggerService {
         this.authorityDAO.createAuthority(authority);
         authority = new Authority(StringUtility.generateIdForEntity(), blogger, Constant.AUTHORITY_DELETE);
         this.authorityDAO.createAuthority(authority);
+        authority = new Authority(StringUtility.generateIdForEntity(), blogger, Constant.AUTHORITY_MANAGE);
+        this.authorityDAO.createAuthority(authority);
         return blogger;
     }
 
