@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,5 +88,29 @@ public class BlogController {
         Blog blog = blogServiceImpl.createBlog(createBlogDTO);
         Blog refreshedBlog = blogServiceImpl.getBlogById(blog.getId());
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.CREATED, refreshedBlog), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/blogs/{blogId}")
+    @Operation(operationId = "deleteBlog", description = "Delete a blog by blogId", summary = "Delete a blog by blogId")
+    @Tag(name = "Blogs")
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "410",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlog.class)))
+    @ApiResponse(
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
+    public ResponseEntity<GlobalResponseEntity> deleteBlogByBlogId(
+            @Valid @NotNull @Size(min = 30) @PathVariable final String blogId, final Principal principal) {
+        final Blog deletedBlog = this.blogServiceImpl.deleteBlogByblogId(blogId, principal.getName());
+        return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.GONE, deletedBlog), HttpStatus.GONE);
     }
 }

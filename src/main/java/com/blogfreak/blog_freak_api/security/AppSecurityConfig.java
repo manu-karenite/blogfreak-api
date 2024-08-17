@@ -51,6 +51,8 @@ public class AppSecurityConfig {
                 // -------------------------------- Blog Related Endpoint -------------------------------- //
                 .requestMatchers(HttpMethod.POST, "/blogs")
                 .hasAuthority(Constant.AUTHORITY_WRITE)
+                .requestMatchers(HttpMethod.DELETE, "/blogs/**")
+                .hasAuthority(Constant.AUTHORITY_DELETE)
                 .requestMatchers(HttpMethod.GET, "/blogs/**")
                 .hasAuthority(Constant.AUTHORITY_READ)
                 .requestMatchers(HttpMethod.GET, "/blogs")

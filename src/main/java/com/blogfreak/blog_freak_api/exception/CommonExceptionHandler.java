@@ -59,6 +59,13 @@ public class CommonExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<GlobalExceptionResponse> forbiddenExceptionResponse(ForbiddenException e) {
+        GlobalExceptionResponse globalExceptionResponse =
+                new GlobalExceptionResponse(HttpStatus.FORBIDDEN, e.getMessage());
+        return new ResponseEntity<>(globalExceptionResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<GlobalExceptionResponse> genericException(Exception e) {
         GlobalExceptionResponse globalExceptionResponse =
                 new GlobalExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

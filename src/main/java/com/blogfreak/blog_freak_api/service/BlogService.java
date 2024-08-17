@@ -10,4 +10,6 @@ public interface BlogService {
     public Blog getBlogById(String blogId);
 
     public Blog createBlog(CreateBlogDTO createBlogDTO);
+
+    public Blog deleteBlogByblogId(final String blogId, final String bloggerId);
 }
