@@ -126,7 +126,7 @@ public class BloggerController {
                 HttpStatus.OK);
     }
 
-    @PatchMapping("/bloggers/{bloggerId}/password")
+    @PatchMapping("/blogger/password")
     @Operation(
             operationId = "updateBloggerPassword",
             description = "Update an existing blogger password",
@@ -145,8 +145,8 @@ public class BloggerController {
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> updateBloggerPassword(
-            @PathVariable @NotNull @Size(min = 1) String bloggerId,
-            @RequestBody @Valid UpdateBloggerPasswordDTO updateBloggerPasswordDTORequest) {
+            @RequestBody @Valid UpdateBloggerPasswordDTO updateBloggerPasswordDTORequest, final Principal principal) {
+        final String bloggerId = principal.getName();
         return new ResponseEntity<>(
                 new GlobalResponseEntity<>(
                         HttpStatus.OK,
