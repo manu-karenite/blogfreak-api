@@ -26,13 +26,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String bloggerId) throws UsernameNotFoundException {
-        Blogger blogger = this.bloggerDAO.getBloggerById(bloggerId);
+    public UserDetails loadUserByUsername(String bloggerEmail) throws UsernameNotFoundException {
+        // User check in DB will be determined based on the email address
+        Blogger blogger = this.bloggerDAO.getBloggerByEmail(bloggerEmail);
         List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
         List<Authority> authorityList = blogger.getListOfAuthorities();
         for (Authority a : authorityList) {
             grantedAuthorityList.add(new SimpleGrantedAuthority(a.getAuthority()));
         }
+        // Once user is verified, the downstream authentication object should store the userId
         return new User(blogger.getId(), blogger.getPassword(), grantedAuthorityList);
     }
 }

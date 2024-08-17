@@ -27,7 +27,7 @@ public class AppSecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/login")
                 .permitAll()
                 // -------------------------------- Blogger Related Endpoint -------------------------------- //
-                .requestMatchers(HttpMethod.PATCH, "/bloggers/**")
+                .requestMatchers(HttpMethod.PATCH, "/blogger")
                 .hasAuthority(Constant.AUTHORITY_MANAGE)
                 .requestMatchers(HttpMethod.GET, "/bloggers/**")
                 .hasAuthority(Constant.AUTHORITY_READ)
