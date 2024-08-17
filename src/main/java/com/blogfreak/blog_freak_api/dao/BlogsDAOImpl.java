@@ -4,7 +4,9 @@ import com.blogfreak.blog_freak_api.entity.Blog;
 import com.blogfreak.blog_freak_api.exception.BlogNotFound;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -36,5 +38,16 @@ public class BlogsDAOImpl implements BlogsDAO {
     public Blog createBlog(Blog blog) {
         this.entityManager.persist(blog);
         return blog;
+    }
+
+    public List<Blog> getListOfAllBlogsInListOfCategories(final Set<String> categoryIdsSet) {
+        TypedQuery<String> query = entityManager.createQuery(
+                "SELECT DISTINCT bmc.blogId FROM BlogMapCategory bmc WHERE bmc.categoryId IN(:categoryIdsSet)",
+                String.class);
+        query.setParameter("categoryIdsSet", categoryIdsSet);
+        List<String> returnedBlogList = query.getResultList();
+        final List<Blog> blogList = new ArrayList<>();
+        for (String blogId : returnedBlogList) blogList.add(getBlogById(blogId));
+        return blogList;
     }
 }

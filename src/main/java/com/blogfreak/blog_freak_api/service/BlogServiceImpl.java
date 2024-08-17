@@ -7,11 +7,10 @@ import com.blogfreak.blog_freak_api.dto.CreateBlogDTO;
 import com.blogfreak.blog_freak_api.entity.Blog;
 import com.blogfreak.blog_freak_api.entity.Blogger;
 import com.blogfreak.blog_freak_api.entity.Category;
+import com.blogfreak.blog_freak_api.util.Constant;
 import com.blogfreak.blog_freak_api.util.StringUtility;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,8 +34,12 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<Blog> getAllBlogs() {
-        return blogsDAOImpl.getAllBlogs();
+    public List<Blog> getAllBlogs(String categoryIdsAsCommaSeparated) {
+        if (categoryIdsAsCommaSeparated.equalsIgnoreCase("")) return blogsDAOImpl.getAllBlogs();
+        final String[] categoryIdsList = categoryIdsAsCommaSeparated.split(Constant.COMMA);
+        Set<String> categoryIdsSet = new HashSet<>();
+        for (String categoryId : categoryIdsList) categoryIdsSet.add(categoryId);
+        return blogsDAOImpl.getListOfAllBlogsInListOfCategories(categoryIdsSet);
     }
 
     @Override
