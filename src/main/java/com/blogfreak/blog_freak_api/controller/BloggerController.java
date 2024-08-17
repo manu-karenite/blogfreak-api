@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -98,7 +99,7 @@ public class BloggerController {
                 new GlobalResponseEntity<>(HttpStatus.CREATED, refreshedBlogger), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/bloggers/{bloggerId}")
+    @PatchMapping("/blogger")
     @Operation(
             operationId = "updateBlogger",
             description = "Update an existing blogger",
@@ -117,8 +118,8 @@ public class BloggerController {
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> updateBlogger(
-            @PathVariable @NotNull @Size(min = 1) String bloggerId,
-            @RequestBody @Valid UpdateBloggerDTO updateBloggerDTORequest) {
+            @RequestBody @Valid UpdateBloggerDTO updateBloggerDTORequest, final Principal principal) {
+        final String bloggerId = principal.getName();
         return new ResponseEntity<>(
                 new GlobalResponseEntity<>(
                         HttpStatus.OK, bloggerService.updateBlogger(updateBloggerDTORequest, bloggerId)),
