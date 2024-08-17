@@ -112,7 +112,7 @@ public class BloggerServiceImpl implements BloggerService {
     @Override
     @Transactional
     public Blogger updateBloggerPassword(UpdateBloggerPasswordDTO updateBloggerPasswordDTO, String bloggerId) {
-        String password = updateBloggerPasswordDTO.getPassword();
+        String password = passwordEncoder.encode(updateBloggerPasswordDTO.getPassword());
         return bloggerDAO.updateBloggerPassword(password, bloggerId);
     }
 }
