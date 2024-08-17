@@ -11,4 +11,6 @@ public interface BlogsDAO {
     public Blog createBlog(Blog blog);
 
     public Blog deleteBlogByblogId(final String blogId, final String bloggerId);
+
+    public Blog updateBlogByblogId(final Blog tobeUpdatedBlog, final String bloggerId);
 }

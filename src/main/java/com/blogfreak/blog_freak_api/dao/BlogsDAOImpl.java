@@ -4,6 +4,7 @@ import com.blogfreak.blog_freak_api.entity.Blog;
 import com.blogfreak.blog_freak_api.exception.BlogNotFound;
 import com.blogfreak.blog_freak_api.exception.ForbiddenException;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,23 @@ public class BlogsDAOImpl implements BlogsDAO {
         }
         this.entityManager.remove(blog);
         return blog;
+    }
+
+    @Override
+    public Blog updateBlogByblogId(final Blog tobeUpdatedBlog, final String bloggerId) {
+        String toBeUpdatedBlogBloggerId = tobeUpdatedBlog.getBlogger().getId();
+        if (!toBeUpdatedBlogBloggerId.equalsIgnoreCase(bloggerId)) {
+            throw new ForbiddenException(String.format(
+                    "Blog with blogId [%s] does not belong to blogger with id : [%s]",
+                    toBeUpdatedBlogBloggerId, bloggerId));
+        }
+        // Remove the existing categories mappings from the BlogMapCategory Entity
+        Query query = entityManager.createQuery("DELETE FROM BlogMapCategory bmc WHERE bmc.blogId=:blogId");
+        query.setParameter("blogId", tobeUpdatedBlog.getId());
+        query.executeUpdate();
+        // Merge the new categories mappings to the BlogMapCategory Entity
+        this.entityManager.merge(tobeUpdatedBlog);
+        return tobeUpdatedBlog;
     }
 
     public List<Blog> getListOfAllBlogsInListOfCategories(final Set<String> categoryIdsSet) {

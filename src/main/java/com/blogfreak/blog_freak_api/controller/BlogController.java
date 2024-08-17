@@ -1,6 +1,7 @@
 package com.blogfreak.blog_freak_api.controller;
 
 import com.blogfreak.blog_freak_api.dto.CreateBlogDTO;
+import com.blogfreak.blog_freak_api.dto.UpdateBlogDTO;
 import com.blogfreak.blog_freak_api.entity.Blog;
 import com.blogfreak.blog_freak_api.oas.schema.error.*;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessBlog;
@@ -112,5 +113,39 @@ public class BlogController {
             @Valid @NotNull @Size(min = 30) @PathVariable final String blogId, final Principal principal) {
         final Blog deletedBlog = this.blogServiceImpl.deleteBlogByblogId(blogId, principal.getName());
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.GONE, deletedBlog), HttpStatus.GONE);
+    }
+
+    @PatchMapping("/blogs/{blogId}")
+    @Operation(
+            operationId = "updateBlogByBlogId",
+            description = "Update an existing blog by blogId",
+            summary = "Update an existing blog by blogId")
+    @Tag(name = "Blogs")
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlog.class)))
+    @ApiResponse(
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception400.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
+    public ResponseEntity<GlobalResponseEntity> updateBlogByBlogId(
+            @Valid @NotNull @Size(min = 30) @PathVariable final String blogId,
+            @RequestBody @Valid UpdateBlogDTO updateBlogDTO,
+            final Principal principal) {
+        final String bloggerId = principal.getName();
+        this.blogServiceImpl.updateBlogByblogId(blogId, updateBlogDTO, bloggerId);
+        final Blog refreshedBlog = this.blogServiceImpl.getBlogById(blogId);
+        return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, refreshedBlog), HttpStatus.OK);
     }
 }
