@@ -16,4 +16,6 @@ public interface BloggerService {
     public Blogger updateBlogger(UpdateBloggerDTO updateBloggerDTORequest, String bloggerId);
 
     public Blogger updateBloggerPassword(UpdateBloggerPasswordDTO updateBloggerPasswordDTO, String bloggerId);
+
+    Blogger deleteBlogger(String bloggerId);
 }

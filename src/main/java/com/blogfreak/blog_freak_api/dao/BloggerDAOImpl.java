@@ -66,4 +66,11 @@ public class BloggerDAOImpl implements BloggerDAO {
         entityManager.merge(blogger);
         return blogger;
     }
+
+    @Override
+    public Blogger deleteBlogger(String bloggerId) {
+        final Blogger blogger = getBloggerById(bloggerId);
+        this.entityManager.remove(blogger);
+        return blogger;
+    }
 }

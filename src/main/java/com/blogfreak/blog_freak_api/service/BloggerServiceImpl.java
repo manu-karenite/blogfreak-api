@@ -115,4 +115,10 @@ public class BloggerServiceImpl implements BloggerService {
         String password = passwordEncoder.encode(updateBloggerPasswordDTO.getPassword());
         return bloggerDAO.updateBloggerPassword(password, bloggerId);
     }
+
+    @Transactional
+    @Override
+    public Blogger deleteBlogger(final String bloggerId) {
+        return this.bloggerDAO.deleteBlogger(bloggerId);
+    }
 }

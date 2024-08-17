@@ -31,6 +31,8 @@ public class AppSecurityConfig {
                 .hasAuthority(Constant.AUTHORITY_MANAGE)
                 .requestMatchers(HttpMethod.PATCH, "/blogger/password")
                 .hasAuthority(Constant.AUTHORITY_MANAGE)
+                .requestMatchers(HttpMethod.DELETE, "/blogger")
+                .hasAuthority(Constant.AUTHORITY_DELETE)
                 .requestMatchers(HttpMethod.GET, "/bloggers/**")
                 .hasAuthority(Constant.AUTHORITY_READ)
                 .requestMatchers(HttpMethod.GET, "/bloggers")
