@@ -51,6 +51,9 @@ public class Blog {
     @Column(name = Constant.UPDATED_AT)
     private Date updatedAt;
 
+    @Column(name = Constant.VERSION)
+    private Integer version;
+
     @ManyToMany(
             cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH},
             fetch = FetchType.EAGER)

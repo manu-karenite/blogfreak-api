@@ -52,4 +52,6 @@ public class Constant {
     public static final String UPDATED_AT = "UPDATED_AT";
     public static final String USER_ID = "USER_ID";
     public static final String URL_ATTACHMENT = "URL_ATTACHMENT";
+    // V
+    public static final String VERSION = "version";
 }

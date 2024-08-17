@@ -74,6 +74,10 @@ public class BlogServiceImpl implements BlogService {
             taggedCategoriesList.add(this.categoryDAO.getCategoryById(categoryId));
         }
         toBePersistedBlog.setListOfCategories(taggedCategoriesList);
+        Date currentDT = new Date();
+        toBePersistedBlog.setCreatedAt(currentDT);
+        toBePersistedBlog.setUpdatedAt(currentDT);
+        toBePersistedBlog.setVersion(Integer.valueOf(1));
         return blogsDAOImpl.createBlog(toBePersistedBlog);
     }
 
@@ -107,6 +111,9 @@ public class BlogServiceImpl implements BlogService {
             taggedCategoriesList.add(this.categoryDAO.getCategoryById(categoryId));
         }
         toBeUpdatedBlog.setListOfCategories(taggedCategoriesList);
+        toBeUpdatedBlog.setVersion(
+                toBeUpdatedBlog.getVersion() == null ? Integer.valueOf(1) : toBeUpdatedBlog.getVersion() + 1);
+        toBeUpdatedBlog.setUpdatedAt(new Date());
         return this.blogsDAOImpl.updateBlogByblogId(toBeUpdatedBlog, bloggerId);
     }
 }

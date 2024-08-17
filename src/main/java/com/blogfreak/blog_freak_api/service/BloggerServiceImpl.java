@@ -12,6 +12,7 @@ import com.blogfreak.blog_freak_api.util.Constant;
 import com.blogfreak.blog_freak_api.util.EnumValidation;
 import com.blogfreak.blog_freak_api.util.StringUtility;
 import jakarta.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +58,17 @@ public class BloggerServiceImpl implements BloggerService {
         blogger.setFirstName(createBloggerDTORequest.getFirstName());
         // LastName is optional
         if (StringUtils.isEmpty(createBloggerDTORequest.getLastName())) {
+            blogger.setLastName("");
+        } else {
             blogger.setLastName(createBloggerDTORequest.getLastName());
         }
         blogger.setEmailId(createBloggerDTORequest.getEmailId());
         blogger.setGender(createBloggerDTORequest.getGender());
         blogger.setPassword(passwordEncoder.encode(createBloggerDTORequest.getPassword()));
+        Date currentDT = new Date();
+        blogger.setRegisteredAt(currentDT);
+        blogger.setUpdatedAt(currentDT);
+        blogger.setVersion(Integer.valueOf(1));
         return bloggerDAO.createBlogger(blogger);
     }
 
@@ -106,14 +113,21 @@ public class BloggerServiceImpl implements BloggerService {
         if (!StringUtils.isEmpty(gender)) {
             blogger.setGender(gender);
         }
+        blogger.setVersion(blogger.getVersion() == null ? Integer.valueOf(1) : blogger.getVersion() + 1);
+        blogger.setUpdatedAt(new Date());
         return bloggerDAO.updateBlogger(blogger, bloggerId);
     }
 
     @Override
     @Transactional
     public Blogger updateBloggerPassword(UpdateBloggerPasswordDTO updateBloggerPasswordDTO, String bloggerId) {
+        Blogger toBeUpdatedBlogger = this.bloggerDAO.getBloggerById(bloggerId);
         String password = passwordEncoder.encode(updateBloggerPasswordDTO.getPassword());
-        return bloggerDAO.updateBloggerPassword(password, bloggerId);
+        toBeUpdatedBlogger.setPassword(password);
+        toBeUpdatedBlogger.setVersion(
+                toBeUpdatedBlogger.getVersion() == null ? Integer.valueOf(1) : toBeUpdatedBlogger.getVersion() + 1);
+        toBeUpdatedBlogger.setUpdatedAt(new Date());
+        return bloggerDAO.updateBloggerPassword(toBeUpdatedBlogger);
     }
 
     @Transactional

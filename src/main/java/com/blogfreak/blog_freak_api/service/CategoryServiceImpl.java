@@ -6,6 +6,7 @@ import com.blogfreak.blog_freak_api.dto.UpdateCategoryDTO;
 import com.blogfreak.blog_freak_api.entity.Category;
 import com.blogfreak.blog_freak_api.util.StringUtility;
 import jakarta.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public Category createCategory(CreateCategoryDTO createCategoryDTORequest) {
-        Category category = new Category(createCategoryDTORequest.getName(), StringUtility.generateIdForEntity());
+        Category category = new Category();
+        category.setName(createCategoryDTORequest.getName());
+        category.setId(StringUtility.generateIdForEntity());
+        Date currentDT = new Date();
+        category.setCreatedAt(currentDT);
+        category.setUpdatedAt(currentDT);
+        category.setVersion(Integer.valueOf(1));
         return categoryDAO.createCategory(category);
     }
 
@@ -44,6 +51,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public Category updateCategory(String categoryId, UpdateCategoryDTO updateCategoryDTO) {
-        return categoryDAO.updateCategory(categoryId, updateCategoryDTO.getName());
+        Category toBeUpdatedCategory = getCategoryById(categoryId);
+        toBeUpdatedCategory.setName(updateCategoryDTO.getName());
+        toBeUpdatedCategory.setVersion(
+                toBeUpdatedCategory.getVersion() == null ? Integer.valueOf(1) : toBeUpdatedCategory.getVersion() + 1);
+        toBeUpdatedCategory.setUpdatedAt(new Date());
+        return categoryDAO.updateCategory(toBeUpdatedCategory);
     }
 }

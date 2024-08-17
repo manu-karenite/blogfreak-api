@@ -58,11 +58,7 @@ public class BloggerDAOImpl implements BloggerDAO {
     }
 
     @Override
-    public Blogger updateBloggerPassword(String password, String bloggerId) {
-        Blogger blogger = entityManager.find(Blogger.class, bloggerId);
-        if (blogger == null)
-            throw new BloggerNotFound(String.format("Blogger with id : [%s] does not exist", bloggerId));
-        blogger.setPassword(password);
+    public Blogger updateBloggerPassword(Blogger blogger) {
         entityManager.merge(blogger);
         return blogger;
     }

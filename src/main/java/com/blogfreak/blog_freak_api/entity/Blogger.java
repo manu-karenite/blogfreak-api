@@ -39,12 +39,18 @@ public class Blogger {
     @Column(name = Constant.GENDER)
     private String gender;
 
+    @Column(name = Constant.VERSION)
+    private Integer version;
+
     @JsonIgnore
     @Column(name = Constant.PASSWORD)
     private String password;
 
     @Column(name = Constant.REGISTERED_AT)
     private Date registeredAt;
+
+    @Column(name = Constant.UPDATED_AT)
+    private Date updatedAt;
 
     @OneToMany(
             mappedBy = Constant.BLOGGER,
@@ -73,19 +79,4 @@ public class Blogger {
             orphanRemoval = false)
     @JsonIgnore
     public List<Blog> listOfBlogsForBlogger;
-
-    public Blogger() {
-        this.registeredAt = new Date();
-        this.lastName = "";
-    }
-
-    public Blogger(String id, String firstName, String lastName, String emailId, String gender, String password) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = "";
-        this.emailId = emailId;
-        this.gender = gender;
-        this.password = password;
-        this.registeredAt = new Date();
-    }
 }
