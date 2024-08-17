@@ -40,9 +40,10 @@ public class BlogController {
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     @Tag(name = "Blogs")
-    public ResponseEntity<GlobalResponseEntity> getAllBlogs() {
+    public ResponseEntity<GlobalResponseEntity> getAllBlogs(
+            @RequestParam(name = "categoryIds", required = false, defaultValue = "") String categoryIds) {
         GlobalResponseEntity globalResponseEntity =
-                new GlobalResponseEntity(HttpStatus.OK, blogServiceImpl.getAllBlogs());
+                new GlobalResponseEntity(HttpStatus.OK, blogServiceImpl.getAllBlogs(categoryIds));
         return new ResponseEntity<>(globalResponseEntity, HttpStatus.OK);
     }
 

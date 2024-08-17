@@ -53,7 +53,7 @@ public class Blog {
 
     @ManyToMany(
             cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @JoinTable(
             name = Constant.BLOGS_MAP_CATEGORIES,
             joinColumns = @JoinColumn(name = Constant.BLOG_ID),
