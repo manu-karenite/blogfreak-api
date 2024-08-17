@@ -52,9 +52,8 @@ public class Blog {
     private Date updatedAt;
 
     @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH},
+            cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH},
             fetch = FetchType.LAZY)
-    @JsonIgnore
     @JoinTable(
             name = Constant.BLOGS_MAP_CATEGORIES,
             joinColumns = @JoinColumn(name = Constant.BLOG_ID),

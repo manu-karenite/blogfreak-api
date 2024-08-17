@@ -2,11 +2,14 @@ package com.blogfreak.blog_freak_api.service;
 
 import com.blogfreak.blog_freak_api.dao.BloggerDAOImpl;
 import com.blogfreak.blog_freak_api.dao.BlogsDAOImpl;
+import com.blogfreak.blog_freak_api.dao.CategoryDAO;
 import com.blogfreak.blog_freak_api.dto.CreateBlogDTO;
 import com.blogfreak.blog_freak_api.entity.Blog;
 import com.blogfreak.blog_freak_api.entity.Blogger;
+import com.blogfreak.blog_freak_api.entity.Category;
 import com.blogfreak.blog_freak_api.util.StringUtility;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +23,15 @@ public class BlogServiceImpl implements BlogService {
     private BlogsDAOImpl blogsDAOImpl;
 
     @Autowired
+    private CategoryDAO categoryDAO;
+
+    @Autowired
     private BloggerDAOImpl bloggerDAO;
 
-    public BlogServiceImpl(BlogsDAOImpl blogsDAOImpl, BloggerDAOImpl bloggerDAO) {
+    public BlogServiceImpl(BlogsDAOImpl blogsDAOImpl, BloggerDAOImpl bloggerDAO, CategoryDAO categoryDAO) {
         this.blogsDAOImpl = blogsDAOImpl;
         this.bloggerDAO = bloggerDAO;
+        this.categoryDAO = categoryDAO;
     }
 
     @Override
@@ -56,6 +63,11 @@ public class BlogServiceImpl implements BlogService {
         toBePersistedBlog.setCreatedAt(currentDate);
         toBePersistedBlog.setUpdatedAt(currentDate);
         toBePersistedBlog.setBlogger(blogger);
+        List<Category> taggedCategoriesList = new ArrayList<>();
+        for (String categoryId : createBlogDTOlogDTO.getCategoryIdList()) {
+            taggedCategoriesList.add(this.categoryDAO.getCategoryById(categoryId));
+        }
+        toBePersistedBlog.setListOfCategories(taggedCategoriesList);
         return blogsDAOImpl.createBlog(toBePersistedBlog);
     }
 }
