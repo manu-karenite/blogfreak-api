@@ -26,13 +26,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String bloggerEmail) throws UsernameNotFoundException {
-        Blogger blogger = this.bloggerDAO.getBloggerByEmail(bloggerEmail);
+    public UserDetails loadUserByUsername(String bloggerId) throws UsernameNotFoundException {
+        Blogger blogger = this.bloggerDAO.getBloggerById(bloggerId);
         List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
         List<Authority> authorityList = blogger.getListOfAuthorities();
         for (Authority a : authorityList) {
             grantedAuthorityList.add(new SimpleGrantedAuthority(a.getAuthority()));
         }
-        return new User(blogger.getEmailId(), blogger.getPassword(), grantedAuthorityList);
+        return new User(blogger.getId(), blogger.getPassword(), grantedAuthorityList);
     }
 }

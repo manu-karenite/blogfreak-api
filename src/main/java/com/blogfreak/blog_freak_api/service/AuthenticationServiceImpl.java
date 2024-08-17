@@ -16,7 +16,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public String loginUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final String username = authentication.getName();
+        final String userId = authentication.getName();
         List<String> grantedAuthorityList = new ArrayList<>();
         for (GrantedAuthority authority : authentication.getAuthorities()) {
             grantedAuthorityList.add(authority.getAuthority());
@@ -26,7 +26,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         final String jwt = Jwts.builder()
                 .issuer(JWTUtils.getJwtIssuer())
                 .subject(JWTUtils.getJwtSubject())
-                .claim(Constant.EMAILID, username)
+                .claim(Constant.ID, userId)
                 .claim(Constant.AUTHORITIES, commaSeparatedAuthoritiesStr)
                 .issuedAt(JWTUtils.getJwtIssueDate())
                 .expiration(JWTUtils.getJwtExpiryDate())

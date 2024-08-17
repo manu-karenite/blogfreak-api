@@ -41,7 +41,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Blog createBlog(CreateBlogDTO createBlogDTOlogDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Blogger blogger = this.bloggerDAO.getBloggerByEmail(authentication.getName());
+        final Blogger blogger = this.bloggerDAO.getBloggerById(authentication.getName());
         Blog toBePersistedBlog = new Blog();
         toBePersistedBlog.setId(StringUtility.generateIdForEntity());
         toBePersistedBlog.setTitle(createBlogDTOlogDTO.getTitle());

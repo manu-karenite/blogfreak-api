@@ -25,15 +25,15 @@ public class BlogFreakApplicationAuthenticationProvider implements Authenticatio
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        final String bloggerEmail = authentication.getName();
+        final String bloggerId = authentication.getName();
         final String bloggerPassword = authentication.getCredentials().toString();
 
-        UserDetails toBeAuthenticatedUser = this.userDetailsServiceImpl.loadUserByUsername(bloggerEmail);
+        UserDetails toBeAuthenticatedUser = this.userDetailsServiceImpl.loadUserByUsername(bloggerId);
         if (!this.passwordEncoder.matches(bloggerPassword, toBeAuthenticatedUser.getPassword())) {
             throw new UnauthorizedException("Wrong password");
         }
         return new UsernamePasswordAuthenticationToken(
-                bloggerEmail, bloggerPassword, toBeAuthenticatedUser.getAuthorities());
+                toBeAuthenticatedUser.getUsername(), bloggerPassword, toBeAuthenticatedUser.getAuthorities());
     }
 
     @Override
