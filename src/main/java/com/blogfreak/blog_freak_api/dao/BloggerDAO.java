@@ -14,7 +14,7 @@ public interface BloggerDAO {
 
     public Blogger updateBlogger(Blogger blogger, String bloggerId);
 
-    public Blogger updateBloggerPassword(String password, String bloggerId);
+    public Blogger updateBloggerPassword(Blogger blogger);
 
     Blogger deleteBlogger(String bloggerId);
 }

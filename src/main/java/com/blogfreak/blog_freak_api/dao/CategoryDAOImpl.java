@@ -49,11 +49,7 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
     @Override
-    public Category updateCategory(String categoryId, String categoryName) {
-        Category category = entityManager.find(Category.class, categoryId);
-        if (category == null)
-            throw new CategoryNotFound(String.format("Category with id : [%s] does not exist", categoryId));
-        category.setName(categoryName);
+    public Category updateCategory(Category category) {
         entityManager.merge(category);
         return category;
     }
