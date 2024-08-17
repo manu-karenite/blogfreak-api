@@ -4,9 +4,7 @@ import com.blogfreak.blog_freak_api.dto.CreateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerPasswordDTO;
 import com.blogfreak.blog_freak_api.entity.Blogger;
-import com.blogfreak.blog_freak_api.oas.schema.error.Exception400;
-import com.blogfreak.blog_freak_api.oas.schema.error.Exception404;
-import com.blogfreak.blog_freak_api.oas.schema.error.Exception500;
+import com.blogfreak.blog_freak_api.oas.schema.error.*;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessBlogger;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessListOfAllBloggers;
 import com.blogfreak.blog_freak_api.service.BloggerService;
@@ -23,12 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
@@ -152,5 +145,29 @@ public class BloggerController {
                         HttpStatus.OK,
                         bloggerService.updateBloggerPassword(updateBloggerPasswordDTORequest, bloggerId)),
                 HttpStatus.OK);
+    }
+
+    @DeleteMapping("/blogger")
+    @Operation(operationId = "deleteBlogger", description = "Delete a blogger", summary = "Delete a blogger")
+    @Tag(name = "Bloggers")
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "410",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlogger.class)))
+    @ApiResponse(
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
+    public ResponseEntity<GlobalResponseEntity> deleteBlogger(final Principal principal) {
+        final String bloggerId = principal.getName();
+        final Blogger deletedBlogger = this.bloggerService.deleteBlogger(bloggerId);
+        return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.GONE, deletedBlogger), HttpStatus.GONE);
     }
 }
