@@ -45,6 +45,13 @@ public class CommonExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<GlobalExceptionResponse> handleResponseForInvalidPatchBlog(InvalidPatchBlog e) {
+        GlobalExceptionResponse globalExceptionResponse =
+                new GlobalExceptionResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        return new ResponseEntity<>(globalExceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<GlobalExceptionResponse> handleHealthCheckFailException(HealthCheckFail e) {
         GlobalExceptionResponse globalExceptionResponse =
                 new GlobalExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

@@ -4,13 +4,16 @@ import com.blogfreak.blog_freak_api.dao.BloggerDAOImpl;
 import com.blogfreak.blog_freak_api.dao.BlogsDAOImpl;
 import com.blogfreak.blog_freak_api.dao.CategoryDAO;
 import com.blogfreak.blog_freak_api.dto.CreateBlogDTO;
+import com.blogfreak.blog_freak_api.dto.UpdateBlogDTO;
 import com.blogfreak.blog_freak_api.entity.Blog;
 import com.blogfreak.blog_freak_api.entity.Blogger;
 import com.blogfreak.blog_freak_api.entity.Category;
+import com.blogfreak.blog_freak_api.exception.InvalidPatchBlog;
 import com.blogfreak.blog_freak_api.util.Constant;
 import com.blogfreak.blog_freak_api.util.StringUtility;
 import jakarta.transaction.Transactional;
 import java.util.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -78,5 +81,32 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Blog deleteBlogByblogId(String blogId, final String bloggerId) {
         return this.blogsDAOImpl.deleteBlogByblogId(blogId, bloggerId);
+    }
+
+    @Transactional
+    @Override
+    public Blog updateBlogByblogId(final String blogId, final UpdateBlogDTO updateBlogDTO, final String bloggerId) {
+        final String newBlogTitle = updateBlogDTO.getTitle();
+        final String newBlogContent = updateBlogDTO.getContent();
+        final String newBlogUrlAttachment = updateBlogDTO.getUrlAttachment();
+        final List<String> categoryIdList = updateBlogDTO.getCategoryIdList();
+        if (StringUtils.isEmpty(newBlogTitle)
+                && StringUtils.isEmpty(newBlogContent)
+                && StringUtils.isEmpty(newBlogUrlAttachment)
+                && categoryIdList == null) {
+            throw new InvalidPatchBlog("One of the allowed properties [title/content/urlAttachment] is mandatory");
+        }
+        if (categoryIdList.isEmpty())
+            throw new InvalidPatchBlog("categoryIdList should either be not present or be non-empty");
+        Blog toBeUpdatedBlog = getBlogById(blogId);
+        if (!StringUtils.isEmpty(newBlogTitle)) toBeUpdatedBlog.setTitle(newBlogTitle);
+        if (!StringUtils.isEmpty(newBlogContent)) toBeUpdatedBlog.setContent(newBlogContent);
+        if (!StringUtils.isEmpty(newBlogUrlAttachment)) toBeUpdatedBlog.setUrlAttachment(newBlogUrlAttachment);
+        List<Category> taggedCategoriesList = new ArrayList<>();
+        for (String categoryId : categoryIdList) {
+            taggedCategoriesList.add(this.categoryDAO.getCategoryById(categoryId));
+        }
+        toBeUpdatedBlog.setListOfCategories(taggedCategoriesList);
+        return this.blogsDAOImpl.updateBlogByblogId(toBeUpdatedBlog, bloggerId);
     }
 }
