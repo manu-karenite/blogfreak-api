@@ -2,6 +2,7 @@ package com.blogfreak.blog_freak_api.dao;
 
 import com.blogfreak.blog_freak_api.entity.Blog;
 import com.blogfreak.blog_freak_api.exception.BlogNotFound;
+import com.blogfreak.blog_freak_api.exception.ForbiddenException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.ArrayList;
@@ -37,6 +38,17 @@ public class BlogsDAOImpl implements BlogsDAO {
     @Override
     public Blog createBlog(Blog blog) {
         this.entityManager.persist(blog);
+        return blog;
+    }
+
+    @Override
+    public Blog deleteBlogByblogId(String blogId, final String bloggerId) {
+        Blog blog = getBlogById(blogId);
+        if (!blog.getBlogger().getId().equalsIgnoreCase(bloggerId)) {
+            throw new ForbiddenException(String.format(
+                    "Blog with blogId [%s] does not belong to blogger with id : [%s]", blogId, bloggerId));
+        }
+        this.entityManager.remove(blog);
         return blog;
     }
 

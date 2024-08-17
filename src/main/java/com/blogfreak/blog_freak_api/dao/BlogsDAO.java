@@ -9,4 +9,6 @@ public interface BlogsDAO {
     public Blog getBlogById(String blogId);
 
     public Blog createBlog(Blog blog);
+
+    public Blog deleteBlogByblogId(final String blogId, final String bloggerId);
 }

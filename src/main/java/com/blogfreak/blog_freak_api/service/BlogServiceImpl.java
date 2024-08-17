@@ -73,4 +73,10 @@ public class BlogServiceImpl implements BlogService {
         toBePersistedBlog.setListOfCategories(taggedCategoriesList);
         return blogsDAOImpl.createBlog(toBePersistedBlog);
     }
+
+    @Transactional
+    @Override
+    public Blog deleteBlogByblogId(String blogId, final String bloggerId) {
+        return this.blogsDAOImpl.deleteBlogByblogId(blogId, bloggerId);
+    }
 }
