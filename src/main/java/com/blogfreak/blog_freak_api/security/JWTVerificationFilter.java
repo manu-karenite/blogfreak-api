@@ -45,11 +45,11 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
                 throw new BadCredentialsException("Malformed JWT. Authentication denied");
             }
 
-            final String emailId = (String) claims.get(Constant.EMAILID);
+            final String userId = (String) claims.get(Constant.ID);
             final String commaSeparatedAuthoritiesStr = (String) claims.get(Constant.AUTHORITIES);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    emailId, null, AuthorityUtils.commaSeparatedStringToAuthorityList(commaSeparatedAuthoritiesStr));
+                    userId, null, AuthorityUtils.commaSeparatedStringToAuthorityList(commaSeparatedAuthoritiesStr));
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (Exception e) {

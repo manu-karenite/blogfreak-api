@@ -75,8 +75,8 @@ public class AuthenticationController {
         // User can be deemed as login now
         if (authentication != null) {
             final String successfulLoginToken = this.authenticationService.loginUser();
-            authentication =
-                    UsernamePasswordAuthenticationToken.unauthenticated(loginDTO.getEmailId(), loginDTO.getPassword());
+            authentication = UsernamePasswordAuthenticationToken.unauthenticated(
+                    authentication.getPrincipal(), loginDTO.getPassword());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             final MultiValueMap<String, String> headers = new HttpHeaders();
             headers.set(Constant.AUTHORIZATION, String.format("%s %s", Constant.BEARER, successfulLoginToken));
