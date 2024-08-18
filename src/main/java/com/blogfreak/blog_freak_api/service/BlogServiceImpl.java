@@ -1,13 +1,16 @@
 package com.blogfreak.blog_freak_api.service;
 
+import com.blogfreak.blog_freak_api.dao.BlogLikeDAOImpl;
 import com.blogfreak.blog_freak_api.dao.BloggerDAOImpl;
 import com.blogfreak.blog_freak_api.dao.BlogsDAOImpl;
 import com.blogfreak.blog_freak_api.dao.CategoryDAO;
 import com.blogfreak.blog_freak_api.dto.CreateBlogDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBlogDTO;
 import com.blogfreak.blog_freak_api.entity.Blog;
+import com.blogfreak.blog_freak_api.entity.BlogLike;
 import com.blogfreak.blog_freak_api.entity.Blogger;
 import com.blogfreak.blog_freak_api.entity.Category;
+import com.blogfreak.blog_freak_api.exception.InvalidLikeException;
 import com.blogfreak.blog_freak_api.exception.InvalidPatchBlog;
 import com.blogfreak.blog_freak_api.util.Constant;
 import com.blogfreak.blog_freak_api.util.StringUtility;
@@ -30,10 +33,18 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     private BloggerDAOImpl bloggerDAO;
 
-    public BlogServiceImpl(BlogsDAOImpl blogsDAOImpl, BloggerDAOImpl bloggerDAO, CategoryDAO categoryDAO) {
+    @Autowired
+    private BlogLikeDAOImpl blogLikeDAOImpl;
+
+    public BlogServiceImpl(
+            BlogsDAOImpl blogsDAOImpl,
+            BloggerDAOImpl bloggerDAO,
+            CategoryDAO categoryDAO,
+            BlogLikeDAOImpl blogLikeDAOImpl) {
         this.blogsDAOImpl = blogsDAOImpl;
         this.bloggerDAO = bloggerDAO;
         this.categoryDAO = categoryDAO;
+        this.blogLikeDAOImpl = blogLikeDAOImpl;
     }
 
     @Override
@@ -78,6 +89,7 @@ public class BlogServiceImpl implements BlogService {
         toBePersistedBlog.setCreatedAt(currentDT);
         toBePersistedBlog.setUpdatedAt(currentDT);
         toBePersistedBlog.setVersion(Integer.valueOf(1));
+        toBePersistedBlog.setLikesCount(Integer.valueOf(0));
         return blogsDAOImpl.createBlog(toBePersistedBlog);
     }
 
@@ -115,5 +127,26 @@ public class BlogServiceImpl implements BlogService {
                 toBeUpdatedBlog.getVersion() == null ? Integer.valueOf(1) : toBeUpdatedBlog.getVersion() + 1);
         toBeUpdatedBlog.setUpdatedAt(new Date());
         return this.blogsDAOImpl.updateBlogByblogId(toBeUpdatedBlog, bloggerId);
+    }
+
+    @Transactional
+    @Override
+    public void likeABlogByBlogId(String blogId, String bloggerId) {
+        Blog blogToBeLiked = this.blogsDAOImpl.getBlogById(blogId);
+        final Blogger blogger = this.bloggerDAO.getBloggerById(bloggerId);
+        if (this.blogLikeDAOImpl.isLikeAlreadyExistingForABloggerOnABlog(blogger, blogId))
+            throw new InvalidLikeException(String.format(
+                    "Like by blogger with id : [%s] already exists on blog with id : [%s]", bloggerId, blogId));
+        // Confirmed that blogger is not having an existing like for the given Blog
+        BlogLike blogLike = new BlogLike();
+        blogLike.setBlogId(blogId);
+        blogLike.setBlogger(blogger);
+        blogLike.setCreatedAt(new Date());
+        blogLike.setId(StringUtility.generateIdForEntity());
+        this.blogLikeDAOImpl.createALike(blogLike);
+
+        // Update the blogCount value on the Blog entity
+        blogToBeLiked.setLikesCount(blogToBeLiked.getLikesCount() == null ? 1 : (blogToBeLiked.getLikesCount() + 1));
+        this.blogsDAOImpl.updateLikesCountForBlog(blogToBeLiked);
     }
 }

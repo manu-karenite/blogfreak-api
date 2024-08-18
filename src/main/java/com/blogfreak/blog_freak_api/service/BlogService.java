@@ -15,4 +15,6 @@ public interface BlogService {
     public Blog deleteBlogByblogId(final String blogId, final String bloggerId);
 
     public Blog updateBlogByblogId(final String blogId, final UpdateBlogDTO updateBlogDTO, final String bloggerId);
+
+    public void likeABlogByBlogId(final String blogId, final String bloggerId);
 }

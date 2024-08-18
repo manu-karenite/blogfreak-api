@@ -148,4 +148,36 @@ public class BlogController {
         final Blog refreshedBlog = this.blogServiceImpl.getBlogById(blogId);
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, refreshedBlog), HttpStatus.OK);
     }
+
+    @PostMapping("/blogs/{blogId}/like")
+    @Operation(
+            operationId = "likeABlogByBlogId",
+            description = "Like a blog by blogId",
+            summary = "Like a blog by blogId")
+    @Tag(name = "Blogs")
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlog.class)))
+    @ApiResponse(
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception400.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
+    public ResponseEntity<GlobalResponseEntity> likeABlogByBlogId(
+            @Valid @NotNull @Size(min = 30) @PathVariable final String blogId, final Principal principal) {
+        final String bloggerId = principal.getName();
+        this.blogServiceImpl.likeABlogByBlogId(blogId, bloggerId);
+        final Blog refreshedBlog = this.blogServiceImpl.getBlogById(blogId);
+        return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, refreshedBlog), HttpStatus.OK);
+    }
 }

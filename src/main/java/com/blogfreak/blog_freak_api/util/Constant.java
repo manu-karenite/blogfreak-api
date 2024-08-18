@@ -16,6 +16,7 @@ public class Constant {
     // B
     public static final String BEARER = "Bearer";
     public static final String BLOGGER = "blogger";
+    public static final String BLOGGER_ID = "blogger_id";
     public static final String BLOGGERS = "bloggers";
     public static final String BLOGS = "blogs";
     public static final String BLOG_ID = "BLOG_ID";
