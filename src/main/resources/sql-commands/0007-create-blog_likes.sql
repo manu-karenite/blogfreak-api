@@ -1,0 +1,8 @@
+CREATE TABLE blog_likes(
+ID INT PRIMARY KEY AUTO_INCREMENT,
+blog_id varchar(36) NOT NULL,
+blogger_id varchar(36) NOT NULL,
+created_at datetime NOT NULL,
+FOREIGN KEY(blog_id) REFERENCES blogs(ID),
+FOREIGN KEY (blogger_id) REFERENCES bloggers(ID)
+);
