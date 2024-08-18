@@ -57,6 +57,8 @@ public class AppSecurityConfig {
                 .hasAuthority(Constant.AUTHORITY_MANAGE)
                 .requestMatchers(HttpMethod.POST, "/blogs")
                 .hasAuthority(Constant.AUTHORITY_WRITE)
+                .requestMatchers(HttpMethod.POST, "/blogs/**")
+                .hasAuthority(Constant.AUTHORITY_WRITE)
                 .requestMatchers(HttpMethod.GET, "/blogs/**")
                 .hasAuthority(Constant.AUTHORITY_READ)
                 .requestMatchers(HttpMethod.GET, "/blogs")
