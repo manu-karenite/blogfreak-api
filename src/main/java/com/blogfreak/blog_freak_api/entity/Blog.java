@@ -54,6 +54,9 @@ public class Blog {
     @Column(name = Constant.VERSION)
     private Integer version;
 
+    @Column(name = Constant.LIKES_COUNT)
+    private Integer likesCount;
+
     @ManyToMany(
             cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH},
             fetch = FetchType.EAGER)

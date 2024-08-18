@@ -40,6 +40,7 @@ public class Constant {
     public static final String JWT_SECRET_SALT = "JWT_SECRET_SALT";
     // L
     public static final String LAST_NAME = "LAST_NAME";
+    public static final String LIKES_COUNT = "likes_count";
     // N
     public static final String NAME = "NAME";
     // P
