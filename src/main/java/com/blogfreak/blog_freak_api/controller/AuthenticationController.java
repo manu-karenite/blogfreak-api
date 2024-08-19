@@ -1,13 +1,17 @@
 package com.blogfreak.blog_freak_api.controller;
 
+import com.blogfreak.blog_freak_api.dto.CreateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.LoginDTO;
+import com.blogfreak.blog_freak_api.entity.Blogger;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception400;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception401;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception404;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception500;
+import com.blogfreak.blog_freak_api.oas.schema.success.SuccessBlogger;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessLogin;
 import com.blogfreak.blog_freak_api.service.AuthenticationService;
 import com.blogfreak.blog_freak_api.service.AuthenticationServiceImpl;
+import com.blogfreak.blog_freak_api.service.BloggerService;
 import com.blogfreak.blog_freak_api.util.Constant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -39,10 +44,16 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    BloggerService bloggerService;
+
     public AuthenticationController(
-            AuthenticationServiceImpl authenticationServiceImpl, AuthenticationManager authenticationManager) {
+            AuthenticationServiceImpl authenticationServiceImpl,
+            AuthenticationManager authenticationManager,
+            BloggerService bloggerService) {
         this.authenticationService = authenticationServiceImpl;
         this.authenticationManager = authenticationManager;
+        this.bloggerService = bloggerService;
     }
 
     @PostMapping("/login")
@@ -86,5 +97,28 @@ public class AuthenticationController {
             return new ResponseEntity<>(
                     new GlobalResponseEntity(HttpStatus.UNAUTHORIZED, "401"), HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @PostMapping("/register")
+    @Operation(
+            operationId = "createBlogger",
+            description = "Register a new user",
+            summary = "Register a new user - Each user in blogfreak application is a blogger!")
+    @Tag(name = "Authentication")
+    @ApiResponse(
+            responseCode = "201",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlogger.class)))
+    @ApiResponse(
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception400.class)))
+    @ApiResponse(
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
+    @SecurityRequirements(value = {})
+    public ResponseEntity<GlobalResponseEntity> createBlogger(@Valid @RequestBody CreateBloggerDTO createBloggerDTO) {
+        Blogger blogger = bloggerService.createBlogger(createBloggerDTO);
+        Blogger refreshedBlogger = bloggerService.getBloggerById(blogger.getId());
+        return new ResponseEntity<>(
+                new GlobalResponseEntity<>(HttpStatus.CREATED, refreshedBlogger), HttpStatus.CREATED);
     }
 }

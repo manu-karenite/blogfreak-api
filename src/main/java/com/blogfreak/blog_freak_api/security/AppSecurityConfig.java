@@ -26,6 +26,8 @@ public class AppSecurityConfig {
                 // -------------------------------- Authentication Related Endpoint -------------------------------- //
                 .requestMatchers(HttpMethod.POST, "/login")
                 .permitAll()
+                .requestMatchers(HttpMethod.POST, "/register")
+                .permitAll()
                 // -------------------------------- Blogger Related Endpoint -------------------------------- //
                 .requestMatchers(HttpMethod.PATCH, "/blogger")
                 .hasAuthority(Constant.AUTHORITY_MANAGE)
@@ -37,8 +39,6 @@ public class AppSecurityConfig {
                 .hasAuthority(Constant.AUTHORITY_READ)
                 .requestMatchers(HttpMethod.GET, "/bloggers")
                 .hasAuthority(Constant.AUTHORITY_READ)
-                .requestMatchers(HttpMethod.POST, "/bloggers")
-                .permitAll()
                 // -------------------------------- Category Related Endpoint -------------------------------- //
                 .requestMatchers(HttpMethod.POST, "/categories")
                 .hasAuthority(Constant.AUTHORITY_ADMIN)

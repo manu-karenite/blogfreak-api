@@ -11,20 +11,20 @@ public class OASTags {
         tag0.setDescription("API Endpoints related to authentication");
 
         Tag tag1 = new Tag();
-        tag1.setName("Bloggers");
-        tag1.setDescription("API Endpoints related to bloggers");
+        tag1.setName("Health Check");
+        tag1.setDescription("API Endpoints related to service health check");
 
         Tag tag2 = new Tag();
-        tag2.setName("Categories");
-        tag2.setDescription("API Endpoints related to categories");
+        tag2.setName("Bloggers");
+        tag2.setDescription("API Endpoints related to bloggers");
 
         Tag tag3 = new Tag();
         tag3.setName("Blogs");
         tag3.setDescription("API Endpoints related to blogs");
 
         Tag tag4 = new Tag();
-        tag4.setName("Health Check");
-        tag4.setDescription("API Endpoints related to service health check");
+        tag4.setName("Categories");
+        tag4.setDescription("API Endpoints related to categories");
 
         List<Tag> listOfTags = new ArrayList<>();
         listOfTags.add(tag0);

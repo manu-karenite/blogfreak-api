@@ -70,7 +70,7 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
     }
 
     private boolean equalsToServletPathCheck(final HttpServletRequest request) {
-        final String[] paths = {"GET|/swagger-ui.html", "POST|/login", "POST|/bloggers", "GET|/healthcheck"};
+        final String[] paths = {"GET|/swagger-ui.html", "POST|/login", "POST|/register", "GET|/healthcheck"};
         final String servletPath = request.getServletPath();
         final String httpMethod = request.getMethod();
         for (String it : paths) {
