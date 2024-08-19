@@ -5,6 +5,7 @@ import com.blogfreak.blog_freak_api.dao.BloggerDAOImpl;
 import com.blogfreak.blog_freak_api.dao.BlogsDAOImpl;
 import com.blogfreak.blog_freak_api.dao.CategoryDAO;
 import com.blogfreak.blog_freak_api.dto.CreateBlogDTO;
+import com.blogfreak.blog_freak_api.dto.GetLikesForBlogDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBlogDTO;
 import com.blogfreak.blog_freak_api.entity.Blog;
 import com.blogfreak.blog_freak_api.entity.BlogLike;
@@ -150,5 +151,20 @@ public class BlogServiceImpl implements BlogService {
                     blogToBeLiked.getLikesCount() == null ? 1 : (blogToBeLiked.getLikesCount() + 1));
         }
         return this.blogsDAOImpl.updateLikesCountForBlog(blogToBeLiked);
+    }
+
+    @Override
+    public GetLikesForBlogDTO getLikesForBlog(String blogId) {
+        List<String> listOfLikesForBlogWithBloggerId = new ArrayList<>();
+        Blog blogToBeIndexed = this.blogsDAOImpl.getBlogById(blogId);
+        GetLikesForBlogDTO getLikesForBlogDTO = new GetLikesForBlogDTO();
+        getLikesForBlogDTO.setId(blogId);
+        getLikesForBlogDTO.setLikesCount(blogToBeIndexed.getLikesCount() == null ? 0 : blogToBeIndexed.getLikesCount());
+        List<BlogLike> blogLikes = blogToBeIndexed.getListOfLikesForBlog();
+        for (BlogLike blogLike : blogLikes) {
+            listOfLikesForBlogWithBloggerId.add(blogLike.getBlogger().getId());
+        }
+        getLikesForBlogDTO.setListOfLikesWithBloggerIds(listOfLikesForBlogWithBloggerId);
+        return getLikesForBlogDTO;
     }
 }
