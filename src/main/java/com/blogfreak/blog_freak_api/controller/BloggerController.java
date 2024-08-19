@@ -1,6 +1,5 @@
 package com.blogfreak.blog_freak_api.controller;
 
-import com.blogfreak.blog_freak_api.dto.CreateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerPasswordDTO;
 import com.blogfreak.blog_freak_api.entity.Blogger;
@@ -71,25 +70,6 @@ public class BloggerController {
     public ResponseEntity<GlobalResponseEntity> getBloggerById(@PathVariable @NotNull @Size(min = 1) String bloggerId) {
         return new ResponseEntity<>(
                 new GlobalResponseEntity<>(HttpStatus.OK, bloggerService.getBloggerById(bloggerId)), HttpStatus.OK);
-    }
-
-    @PostMapping("/bloggers")
-    @Operation(operationId = "createBlogger", description = "Create a new blogger", summary = "Create a new blogger")
-    @Tag(name = "Bloggers")
-    @ApiResponse(
-            responseCode = "201",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlogger.class)))
-    @ApiResponse(
-            responseCode = "400",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception400.class)))
-    @ApiResponse(
-            responseCode = "500",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
-    public ResponseEntity<GlobalResponseEntity> createBlogger(@Valid @RequestBody CreateBloggerDTO createBloggerDTO) {
-        Blogger blogger = bloggerService.createBlogger(createBloggerDTO);
-        Blogger refreshedBlogger = bloggerService.getBloggerById(blogger.getId());
-        return new ResponseEntity<>(
-                new GlobalResponseEntity<>(HttpStatus.CREATED, refreshedBlogger), HttpStatus.CREATED);
     }
 
     @PatchMapping("/blogger")
