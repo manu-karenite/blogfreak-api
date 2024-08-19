@@ -43,6 +43,12 @@ public class Constant {
     public static final String LAST_NAME = "LAST_NAME";
     public static final String LIKES_COUNT = "likes_count";
     // N
+    // O
+    public static final String OAS_READ_AUTH = "**Role(s) required for this operation:**\n\n- `READ`";
+    public static final String OAS_WRITE_AUTH = "**Role(s) required for this operation:**\n\n- `WRITE`";
+    public static final String OAS_DELETE_AUTH = "**Role(s) required for this operation:**\n\n- `DELETE`";
+    public static final String OAS_MANAGE_AUTH = "**Role(s) required for this operation:**\n\n- `MANAGE`";
+    public static final String OAS_ADMIN_AUTH = "**Role(s) required for this operation:**\n\n- `ADMIN`";
     public static final String NAME = "NAME";
     // P
     public static final String PASSWORD = "PASSWORD";
