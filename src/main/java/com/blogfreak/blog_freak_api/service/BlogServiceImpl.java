@@ -10,7 +10,6 @@ import com.blogfreak.blog_freak_api.entity.Blog;
 import com.blogfreak.blog_freak_api.entity.BlogLike;
 import com.blogfreak.blog_freak_api.entity.Blogger;
 import com.blogfreak.blog_freak_api.entity.Category;
-import com.blogfreak.blog_freak_api.exception.InvalidLikeException;
 import com.blogfreak.blog_freak_api.exception.InvalidPatchBlog;
 import com.blogfreak.blog_freak_api.util.Constant;
 import com.blogfreak.blog_freak_api.util.StringUtility;
@@ -131,22 +130,25 @@ public class BlogServiceImpl implements BlogService {
 
     @Transactional
     @Override
-    public void likeABlogByBlogId(String blogId, String bloggerId) {
+    public Blog likeUnlikeABlogByBlogId(String blogId, String bloggerId) {
         Blog blogToBeLiked = this.blogsDAOImpl.getBlogById(blogId);
         final Blogger blogger = this.bloggerDAO.getBloggerById(bloggerId);
-        if (this.blogLikeDAOImpl.isLikeAlreadyExistingForABloggerOnABlog(blogger, blogId))
-            throw new InvalidLikeException(String.format(
-                    "Like by blogger with id : [%s] already exists on blog with id : [%s]", bloggerId, blogId));
-        // Confirmed that blogger is not having an existing like for the given Blog
-        BlogLike blogLike = new BlogLike();
-        blogLike.setBlogId(blogId);
-        blogLike.setBlogger(blogger);
-        blogLike.setCreatedAt(new Date());
-        blogLike.setId(StringUtility.generateIdForEntity());
-        this.blogLikeDAOImpl.createALike(blogLike);
-
-        // Update the blogCount value on the Blog entity
-        blogToBeLiked.setLikesCount(blogToBeLiked.getLikesCount() == null ? 1 : (blogToBeLiked.getLikesCount() + 1));
-        this.blogsDAOImpl.updateLikesCountForBlog(blogToBeLiked);
+        BlogLike persistedBlogLike = this.blogLikeDAOImpl.isLikeAlreadyExistingForABloggerOnABlog(blogger, blogId);
+        if (persistedBlogLike != null) {
+            // Remove the like for the currentBlogger from the Blog
+            this.blogLikeDAOImpl.deleteBlogLike(persistedBlogLike);
+            blogToBeLiked.setLikesCount(blogToBeLiked.getLikesCount() - 1);
+        } else {
+            BlogLike blogLike = new BlogLike();
+            blogLike.setBlogId(blogId);
+            blogLike.setBlogger(blogger);
+            blogLike.setCreatedAt(new Date());
+            blogLike.setId(StringUtility.generateIdForEntity());
+            this.blogLikeDAOImpl.createALike(blogLike);
+            // Update the blogCount value on the Blog entity
+            blogToBeLiked.setLikesCount(
+                    blogToBeLiked.getLikesCount() == null ? 1 : (blogToBeLiked.getLikesCount() + 1));
+        }
+        return this.blogsDAOImpl.updateLikesCountForBlog(blogToBeLiked);
     }
 }

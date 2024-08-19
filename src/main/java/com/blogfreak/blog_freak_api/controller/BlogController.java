@@ -149,11 +149,12 @@ public class BlogController {
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, refreshedBlog), HttpStatus.OK);
     }
 
-    @PostMapping("/blogs/{blogId}/like")
+    @PatchMapping("/blogs/{blogId}/like-unlike")
     @Operation(
-            operationId = "likeABlogByBlogId",
-            description = "Like a blog by blogId",
-            summary = "Like a blog by blogId")
+            operationId = "likeUnlikeABlogByBlogId",
+            description =
+                    "Like/Unlike a blog by blogId. If the current logged in user has no like on the blog, new like will be created. If like already exists, like will be removed from the blog",
+            summary = "Like/Unlike a blog by blogId")
     @Tag(name = "Blogs")
     @ApiResponse(
             responseCode = "200",
@@ -173,10 +174,10 @@ public class BlogController {
     @ApiResponse(
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
-    public ResponseEntity<GlobalResponseEntity> likeABlogByBlogId(
+    public ResponseEntity<GlobalResponseEntity> likeUnlikeABlogByBlogId(
             @Valid @NotNull @Size(min = 30) @PathVariable final String blogId, final Principal principal) {
         final String bloggerId = principal.getName();
-        this.blogServiceImpl.likeABlogByBlogId(blogId, bloggerId);
+        this.blogServiceImpl.likeUnlikeABlogByBlogId(blogId, bloggerId);
         final Blog refreshedBlog = this.blogServiceImpl.getBlogById(blogId);
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, refreshedBlog), HttpStatus.OK);
     }

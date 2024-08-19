@@ -18,17 +18,23 @@ public class BlogLikeDAOImpl implements BlogLikeDAO {
         this.entityManager = entityManager;
     }
 
-    public boolean isLikeAlreadyExistingForABloggerOnABlog(final Blogger blogger, final String blogId) {
+    public BlogLike isLikeAlreadyExistingForABloggerOnABlog(final Blogger blogger, final String blogId) {
         TypedQuery<BlogLike> query =
                 entityManager.createQuery("from BlogLike WHERE blogId=:blogId AND blogger=:blogger", BlogLike.class);
         query.setParameter("blogId", blogId);
         query.setParameter("blogger", blogger);
         List<BlogLike> resultList = query.getResultList();
-        if (resultList == null || resultList.size() == 0) return false;
-        return true;
+        if (resultList == null || resultList.size() == 0) return null;
+        else return resultList.get(0);
     }
 
     public void createALike(BlogLike blogLike) {
         this.entityManager.persist(blogLike);
+    }
+
+    @Override
+    public BlogLike deleteBlogLike(BlogLike blogLike) {
+        this.entityManager.remove(blogLike);
+        return blogLike;
     }
 }

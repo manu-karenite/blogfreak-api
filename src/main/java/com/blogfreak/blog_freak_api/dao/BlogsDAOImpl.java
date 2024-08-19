@@ -81,7 +81,8 @@ public class BlogsDAOImpl implements BlogsDAO {
         return blogList;
     }
 
-    public void updateLikesCountForBlog(Blog blogToBeLiked) {
+    public Blog updateLikesCountForBlog(Blog blogToBeLiked) {
         this.entityManager.merge(blogToBeLiked);
+        return blogToBeLiked;
     }
 }
