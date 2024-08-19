@@ -80,4 +80,9 @@ public class BlogsDAOImpl implements BlogsDAO {
         for (String blogId : returnedBlogList) blogList.add(getBlogById(blogId));
         return blogList;
     }
+
+    public Blog updateLikesCountForBlog(Blog blogToBeLiked) {
+        this.entityManager.merge(blogToBeLiked);
+        return blogToBeLiked;
+    }
 }

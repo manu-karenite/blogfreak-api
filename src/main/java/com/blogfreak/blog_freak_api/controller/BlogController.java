@@ -1,10 +1,12 @@
 package com.blogfreak.blog_freak_api.controller;
 
 import com.blogfreak.blog_freak_api.dto.CreateBlogDTO;
+import com.blogfreak.blog_freak_api.dto.GetLikesForBlogDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBlogDTO;
 import com.blogfreak.blog_freak_api.entity.Blog;
 import com.blogfreak.blog_freak_api.oas.schema.error.*;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessBlog;
+import com.blogfreak.blog_freak_api.oas.schema.success.SuccessGetLikesForBlog;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessListOfAllBlogs;
 import com.blogfreak.blog_freak_api.service.BlogServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -147,5 +149,68 @@ public class BlogController {
         this.blogServiceImpl.updateBlogByblogId(blogId, updateBlogDTO, bloggerId);
         final Blog refreshedBlog = this.blogServiceImpl.getBlogById(blogId);
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, refreshedBlog), HttpStatus.OK);
+    }
+
+    @PatchMapping("/blogs/{blogId}/like-unlike")
+    @Operation(
+            operationId = "likeUnlikeABlogByBlogId",
+            description =
+                    "Like/Unlike a blog by blogId. If the current logged in user has no like on the blog, new like will be created. If like already exists, like will be removed from the blog",
+            summary = "Like/Unlike a blog by blogId")
+    @Tag(name = "Blogs")
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlog.class)))
+    @ApiResponse(
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception400.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
+    public ResponseEntity<GlobalResponseEntity> likeUnlikeABlogByBlogId(
+            @Valid @NotNull @Size(min = 30) @PathVariable final String blogId, final Principal principal) {
+        final String bloggerId = principal.getName();
+        this.blogServiceImpl.likeUnlikeABlogByBlogId(blogId, bloggerId);
+        final Blog refreshedBlog = this.blogServiceImpl.getBlogById(blogId);
+        return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, refreshedBlog), HttpStatus.OK);
+    }
+
+    @GetMapping("/blogs/{blogId}/likes")
+    @Operation(operationId = "getLikesForBlog", description = "Get Likes for a Blog", summary = "Get Likes for a Blog")
+    @Tag(name = "Blogs")
+    @ApiResponse(
+            responseCode = "200",
+            content =
+                    @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessGetLikesForBlog.class)))
+    @ApiResponse(
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception400.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
+    public ResponseEntity<GlobalResponseEntity> getLikesForBlog(
+            @Valid @NotNull @Size(min = 30) @PathVariable final String blogId) {
+        GetLikesForBlogDTO getLikesForBlogDTO = this.blogServiceImpl.getLikesForBlog(blogId);
+        return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, getLikesForBlogDTO), HttpStatus.OK);
     }
 }

@@ -1,11 +1,14 @@
 package com.blogfreak.blog_freak_api.service;
 
+import com.blogfreak.blog_freak_api.dao.BlogLikeDAOImpl;
 import com.blogfreak.blog_freak_api.dao.BloggerDAOImpl;
 import com.blogfreak.blog_freak_api.dao.BlogsDAOImpl;
 import com.blogfreak.blog_freak_api.dao.CategoryDAO;
 import com.blogfreak.blog_freak_api.dto.CreateBlogDTO;
+import com.blogfreak.blog_freak_api.dto.GetLikesForBlogDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBlogDTO;
 import com.blogfreak.blog_freak_api.entity.Blog;
+import com.blogfreak.blog_freak_api.entity.BlogLike;
 import com.blogfreak.blog_freak_api.entity.Blogger;
 import com.blogfreak.blog_freak_api.entity.Category;
 import com.blogfreak.blog_freak_api.exception.InvalidPatchBlog;
@@ -30,10 +33,18 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     private BloggerDAOImpl bloggerDAO;
 
-    public BlogServiceImpl(BlogsDAOImpl blogsDAOImpl, BloggerDAOImpl bloggerDAO, CategoryDAO categoryDAO) {
+    @Autowired
+    private BlogLikeDAOImpl blogLikeDAOImpl;
+
+    public BlogServiceImpl(
+            BlogsDAOImpl blogsDAOImpl,
+            BloggerDAOImpl bloggerDAO,
+            CategoryDAO categoryDAO,
+            BlogLikeDAOImpl blogLikeDAOImpl) {
         this.blogsDAOImpl = blogsDAOImpl;
         this.bloggerDAO = bloggerDAO;
         this.categoryDAO = categoryDAO;
+        this.blogLikeDAOImpl = blogLikeDAOImpl;
     }
 
     @Override
@@ -78,6 +89,7 @@ public class BlogServiceImpl implements BlogService {
         toBePersistedBlog.setCreatedAt(currentDT);
         toBePersistedBlog.setUpdatedAt(currentDT);
         toBePersistedBlog.setVersion(Integer.valueOf(1));
+        toBePersistedBlog.setLikesCount(Integer.valueOf(0));
         return blogsDAOImpl.createBlog(toBePersistedBlog);
     }
 
@@ -115,5 +127,44 @@ public class BlogServiceImpl implements BlogService {
                 toBeUpdatedBlog.getVersion() == null ? Integer.valueOf(1) : toBeUpdatedBlog.getVersion() + 1);
         toBeUpdatedBlog.setUpdatedAt(new Date());
         return this.blogsDAOImpl.updateBlogByblogId(toBeUpdatedBlog, bloggerId);
+    }
+
+    @Transactional
+    @Override
+    public Blog likeUnlikeABlogByBlogId(String blogId, String bloggerId) {
+        Blog blogToBeLiked = this.blogsDAOImpl.getBlogById(blogId);
+        final Blogger blogger = this.bloggerDAO.getBloggerById(bloggerId);
+        BlogLike persistedBlogLike = this.blogLikeDAOImpl.isLikeAlreadyExistingForABloggerOnABlog(blogger, blogId);
+        if (persistedBlogLike != null) {
+            // Remove the like for the currentBlogger from the Blog
+            this.blogLikeDAOImpl.deleteBlogLike(persistedBlogLike);
+            blogToBeLiked.setLikesCount(blogToBeLiked.getLikesCount() - 1);
+        } else {
+            BlogLike blogLike = new BlogLike();
+            blogLike.setBlogId(blogId);
+            blogLike.setBlogger(blogger);
+            blogLike.setCreatedAt(new Date());
+            blogLike.setId(StringUtility.generateIdForEntity());
+            this.blogLikeDAOImpl.createALike(blogLike);
+            // Update the blogCount value on the Blog entity
+            blogToBeLiked.setLikesCount(
+                    blogToBeLiked.getLikesCount() == null ? 1 : (blogToBeLiked.getLikesCount() + 1));
+        }
+        return this.blogsDAOImpl.updateLikesCountForBlog(blogToBeLiked);
+    }
+
+    @Override
+    public GetLikesForBlogDTO getLikesForBlog(String blogId) {
+        List<String> listOfLikesForBlogWithBloggerId = new ArrayList<>();
+        Blog blogToBeIndexed = this.blogsDAOImpl.getBlogById(blogId);
+        GetLikesForBlogDTO getLikesForBlogDTO = new GetLikesForBlogDTO();
+        getLikesForBlogDTO.setId(blogId);
+        getLikesForBlogDTO.setLikesCount(blogToBeIndexed.getLikesCount() == null ? 0 : blogToBeIndexed.getLikesCount());
+        List<BlogLike> blogLikes = blogToBeIndexed.getListOfLikesForBlog();
+        for (BlogLike blogLike : blogLikes) {
+            listOfLikesForBlogWithBloggerId.add(blogLike.getBlogger().getId());
+        }
+        getLikesForBlogDTO.setListOfLikesWithBloggerIds(listOfLikesForBlogWithBloggerId);
+        return getLikesForBlogDTO;
     }
 }

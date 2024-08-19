@@ -16,6 +16,7 @@ public class Constant {
     // B
     public static final String BEARER = "Bearer";
     public static final String BLOGGER = "blogger";
+    public static final String BLOGGER_ID = "blogger_id";
     public static final String BLOGGERS = "bloggers";
     public static final String BLOGS = "blogs";
     public static final String BLOG_ID = "BLOG_ID";
@@ -40,6 +41,7 @@ public class Constant {
     public static final String JWT_SECRET_SALT = "JWT_SECRET_SALT";
     // L
     public static final String LAST_NAME = "LAST_NAME";
+    public static final String LIKES_COUNT = "likes_count";
     // N
     public static final String NAME = "NAME";
     // P

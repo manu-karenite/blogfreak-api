@@ -79,4 +79,19 @@ public class Blogger {
             orphanRemoval = false)
     @JsonIgnore
     public List<Blog> listOfBlogsForBlogger;
+
+    // One to Many Mapping with Blog Entity
+    @OneToMany(
+            mappedBy = Constant.BLOGGER,
+            fetch = FetchType.LAZY,
+            cascade = {
+                CascadeType.PERSIST,
+                CascadeType.MERGE,
+                CascadeType.REMOVE,
+                CascadeType.REFRESH,
+                CascadeType.REFRESH
+            },
+            orphanRemoval = false)
+    @JsonIgnore
+    public List<BlogLike> listOfLikesForABlogger;
 }
