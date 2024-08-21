@@ -7,6 +7,7 @@ import com.blogfreak.blog_freak_api.oas.schema.error.*;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessBlogger;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessListOfAllBloggers;
 import com.blogfreak.blog_freak_api.service.BloggerService;
+import com.blogfreak.blog_freak_api.util.Constant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +26,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Validated
 public class BloggerController {
+    private final String getAllBloggersDescription = "**Operation** : Get all bloggers existing in the application\n\n";
+    private final String getABloggerByBloggerIdDescription =
+            "**Operation** : Get a unique blogger existing in the application identified by bloggerId\n\n";
+    private final String updateBloggerDescription =
+            "**Operation** : Update a blogger's details belonging to the current logged-in blogger\n\n";
+    private final String updateBloggerPasswordDescription =
+            "**Operation** : Update a blogger's password belonging to the current logged-in blogger\n\n";
+    private final String deleteBloggerPasswordDescription =
+            "**Operation** : Delete a blogger's profile from blog-freak application belonging to the current logged-in blogger\n\n";
+
     @Autowired
     BloggerService bloggerService;
 
@@ -35,8 +46,8 @@ public class BloggerController {
     @GetMapping("/bloggers")
     @Operation(
             operationId = "getAllBloggers",
-            description = "Get list of all bloggers",
-            summary = "Get list of all bloggers")
+            description = getAllBloggersDescription + Constant.OAS_READ_AUTH,
+            summary = "Get all bloggers existing in the application")
     @ApiResponse(
             responseCode = "200",
             content =
@@ -55,8 +66,8 @@ public class BloggerController {
     @GetMapping("/bloggers/{bloggerId}")
     @Operation(
             operationId = "getBloggerById",
-            description = "Get blogger details by id",
-            summary = "Get blogger details by id")
+            description = getABloggerByBloggerIdDescription + Constant.OAS_READ_AUTH,
+            summary = "Get a unique blogger existing in the application identified by bloggerId")
     @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlogger.class)))
@@ -75,8 +86,8 @@ public class BloggerController {
     @PatchMapping("/blogger")
     @Operation(
             operationId = "updateBlogger",
-            description = "Update an existing blogger",
-            summary = "Update an existing blogger")
+            description = updateBloggerDescription + Constant.OAS_MANAGE_AUTH,
+            summary = "Update a blogger's details belonging to the current logged-in blogger")
     @Tag(name = "Bloggers")
     @ApiResponse(
             responseCode = "200",
@@ -102,8 +113,8 @@ public class BloggerController {
     @PatchMapping("/blogger/password")
     @Operation(
             operationId = "updateBloggerPassword",
-            description = "Update an existing blogger password",
-            summary = "Update an existing blogger password")
+            description = updateBloggerPasswordDescription + Constant.OAS_MANAGE_AUTH,
+            summary = "Update a blogger's password belonging to the current logged-in blogger")
     @Tag(name = "Bloggers")
     @ApiResponse(
             responseCode = "200",
@@ -128,7 +139,11 @@ public class BloggerController {
     }
 
     @DeleteMapping("/blogger")
-    @Operation(operationId = "deleteBlogger", description = "Delete a blogger", summary = "Delete a blogger")
+    @Operation(
+            operationId = "deleteBlogger",
+            description = deleteBloggerPasswordDescription + Constant.AUTHORITY_DELETE,
+            summary =
+                    "Delete a blogger's profile from blog-freak application belonging to the current logged-in blogger")
     @Tag(name = "Bloggers")
     @ApiResponse(
             responseCode = "401",
