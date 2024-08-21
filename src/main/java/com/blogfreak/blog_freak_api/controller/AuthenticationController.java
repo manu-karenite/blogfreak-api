@@ -37,6 +37,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 public class AuthenticationController {
+    private final String loginDescription =
+            "**Operation** : Login to the blog-freak application using emailAddress and password\n\n";
+    private final String registerDescription =
+            "**Operation** : Register in the blog-freak application as a new user(blogger). On successful registration, each new blogger is authorised with 4 authorities [READ/WRITE/DELETE/MANAGE]\n\n";
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -59,8 +63,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     @Operation(
             operationId = "login",
-            description = "Login a blogger using emailId and Password",
-            summary = "Login a blogger using emailId and Password")
+            description = loginDescription,
+            summary = "Login to the blog-freak application using emailAddress and password")
     @Tag(name = "Authentication")
     @ApiResponse(
             responseCode = "200",
@@ -102,7 +106,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     @Operation(
             operationId = "createBlogger",
-            description = "Register a new user",
+            description = registerDescription,
             summary = "Register a new user - Each user in blogfreak application is a blogger!")
     @Tag(name = "Authentication")
     @ApiResponse(

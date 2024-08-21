@@ -9,6 +9,7 @@ import com.blogfreak.blog_freak_api.oas.schema.success.SuccessBlog;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessGetLikesForBlog;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessListOfAllBlogs;
 import com.blogfreak.blog_freak_api.service.BlogServiceImpl;
+import com.blogfreak.blog_freak_api.util.Constant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +26,20 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class BlogController {
+    private final String getAllBlogsDescription = "**Operation** : Get all blogs existing in the application\n\n";
+    private final String getBlogByBlogIdDescription =
+            "**Operation** : Get a unique blog existing in the application identified by blogId\n\n";
+    private final String createBlogDescription =
+            "**Operation** : Create a new blog which gets mapped to blogger's account based on logged-in blogger\n\n";
+    private final String deleteABlogByBlogIdDescription =
+            "**Operation** : Delete a blog belonging to the current logged-in blogger. BlogId is required to uniquely identify the blog to be deleted from the blogger's account\n\n";
+    private final String updateABlogByBlogIdDescription =
+            "**Operation** : Update a blog belonging to the current logged-in blogger. BlogId is required to uniquely identify the blog to be updated from the blogger's account\n\n";
+    private final String likeOrUnlikeABlogDescription =
+            "**Operation** : Like or unlike an existing blog identified using blogId. If the logged-in blogger has not yet liked the blog, a new like will be added for the blog. If the blogger already has a like on the blog, like will be removed\n\n";
+    private final String getLikesForABlogDescription =
+            "**Operation** : Gets the like statistics for a blog using blogId\n\n";
+
     @Autowired
     private BlogServiceImpl blogServiceImpl;
 
@@ -33,7 +48,10 @@ public class BlogController {
     }
 
     @GetMapping("/blogs")
-    @Operation(operationId = "getAllBlogs", description = "Get list of all blogs", summary = "Get list of all blogs")
+    @Operation(
+            operationId = "getAllBlogs",
+            description = getAllBlogsDescription + Constant.OAS_READ_AUTH,
+            summary = "Get all blogs existing in the application")
     @ApiResponse(
             responseCode = "200",
             content =
@@ -52,7 +70,10 @@ public class BlogController {
     }
 
     @GetMapping("/blogs/{blogId}")
-    @Operation(operationId = "getBlogById", description = "Get blog details by id", summary = "Get blog details by id")
+    @Operation(
+            operationId = "getBlogById",
+            description = getBlogByBlogIdDescription + Constant.OAS_READ_AUTH,
+            summary = "Get blog details by id")
     @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlog.class)))
@@ -69,8 +90,11 @@ public class BlogController {
         return new ResponseEntity<>(globalResponseEntity, HttpStatus.OK);
     }
 
-    @PostMapping("/blog")
-    @Operation(operationId = "createBlog", description = "Create a new blog", summary = "Create a new blog")
+    @PostMapping("/blogs")
+    @Operation(
+            operationId = "createBlog",
+            description = createBlogDescription + Constant.OAS_WRITE_AUTH,
+            summary = "Create a new blog")
     @Tag(name = "Blogs")
     @ApiResponse(
             responseCode = "201",
@@ -94,7 +118,10 @@ public class BlogController {
     }
 
     @DeleteMapping("/blogs/{blogId}")
-    @Operation(operationId = "deleteBlog", description = "Delete a blog by blogId", summary = "Delete a blog by blogId")
+    @Operation(
+            operationId = "deleteBlog",
+            description = deleteABlogByBlogIdDescription + Constant.OAS_DELETE_AUTH,
+            summary = "Delete a blog by blogId")
     @Tag(name = "Blogs")
     @ApiResponse(
             responseCode = "401",
@@ -120,7 +147,7 @@ public class BlogController {
     @PatchMapping("/blogs/{blogId}")
     @Operation(
             operationId = "updateBlogByBlogId",
-            description = "Update an existing blog by blogId",
+            description = updateABlogByBlogIdDescription + Constant.OAS_MANAGE_AUTH,
             summary = "Update an existing blog by blogId")
     @Tag(name = "Blogs")
     @ApiResponse(
@@ -154,8 +181,7 @@ public class BlogController {
     @PatchMapping("/blogs/{blogId}/like-unlike")
     @Operation(
             operationId = "likeUnlikeABlogByBlogId",
-            description =
-                    "Like/Unlike a blog by blogId. If the current logged in user has no like on the blog, new like will be created. If like already exists, like will be removed from the blog",
+            description = likeOrUnlikeABlogDescription + Constant.OAS_MANAGE_AUTH,
             summary = "Like/Unlike a blog by blogId")
     @Tag(name = "Blogs")
     @ApiResponse(
@@ -185,7 +211,10 @@ public class BlogController {
     }
 
     @GetMapping("/blogs/{blogId}/likes")
-    @Operation(operationId = "getLikesForBlog", description = "Get Likes for a Blog", summary = "Get Likes for a Blog")
+    @Operation(
+            operationId = "getLikesForBlog",
+            description = getLikesForABlogDescription + Constant.OAS_READ_AUTH,
+            summary = "Get Likes for a Blog")
     @Tag(name = "Blogs")
     @ApiResponse(
             responseCode = "200",
