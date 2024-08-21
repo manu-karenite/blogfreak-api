@@ -9,6 +9,7 @@ import com.blogfreak.blog_freak_api.oas.schema.error.Exception500;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessCategory;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessListOfAllCategories;
 import com.blogfreak.blog_freak_api.service.CategoryService;
+import com.blogfreak.blog_freak_api.util.Constant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,6 +31,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 public class CategoryController {
+    private final String getAllCategoriesDescription =
+            "**Operation** : Get all categories existing in the application\n\n";
+    private final String getACategoryByCategoryIdDescription =
+            "**Operation** : Get a unique category existing in the application identified by categoryId\n\n";
+    private final String createCategoryDescription = "**Operation** : Create a new unique category\n\n";
+    private final String deleteCategoryDescription =
+            "**Operation** : Delete a category from the blog-freak application. CategoryId is required to uniquely identify the category to be deleted.\n\n";
+    private final String updateCategoryDescription =
+            "**Operation** : Update a category from the blog-freak application. CategoryId is required to uniquely identify the category to be updated.\n\n";
 
     @Autowired
     CategoryService categoryService;
@@ -41,8 +51,8 @@ public class CategoryController {
     @GetMapping("/categories")
     @Operation(
             operationId = "getAllCategories",
-            description = "Get list of all categories",
-            summary = "Get list of all categories")
+            description = getAllCategoriesDescription + Constant.OAS_READ_AUTH,
+            summary = "Get all categories existing in the application")
     @ApiResponse(
             responseCode = "200",
             content =
@@ -61,8 +71,8 @@ public class CategoryController {
     @GetMapping("/categories/{categoryId}")
     @Operation(
             operationId = "getCategoryById",
-            description = "Get category details by id",
-            summary = "Get category details by id")
+            description = getACategoryByCategoryIdDescription + Constant.OAS_READ_AUTH,
+            summary = "Get a unique category existing in the application identified by categoryId")
     @ApiResponse(
             responseCode = "200",
             content =
@@ -80,7 +90,10 @@ public class CategoryController {
     }
 
     @PostMapping("/categories")
-    @Operation(operationId = "createCategory", description = "Create a category", summary = "Create a category")
+    @Operation(
+            operationId = "createCategory",
+            description = createCategoryDescription + Constant.OAS_ADMIN_AUTH,
+            summary = "Create a new unique category")
     @Tag(name = "Categories")
     @ApiResponse(
             responseCode = "201",
@@ -101,7 +114,10 @@ public class CategoryController {
     }
 
     @DeleteMapping("/categories/{categoryId}")
-    @Operation(operationId = "deleteCategory", description = "Delete a category", summary = "Delete a category")
+    @Operation(
+            operationId = "deleteCategory",
+            description = deleteCategoryDescription + Constant.OAS_ADMIN_AUTH,
+            summary = "Delete a category from the blog-freak application")
     @Tag(name = "Categories")
     @ApiResponse(
             responseCode = "410",
@@ -119,7 +135,10 @@ public class CategoryController {
     }
 
     @PatchMapping("/categories/{categoryId}")
-    @Operation(operationId = "updateCategory", description = "Update a category", summary = "Update a category")
+    @Operation(
+            operationId = "updateCategory",
+            description = updateCategoryDescription + Constant.OAS_ADMIN_AUTH,
+            summary = "Update a category from the blog-freak application")
     @Tag(name = "Categories")
     @ApiResponse(
             responseCode = "200",

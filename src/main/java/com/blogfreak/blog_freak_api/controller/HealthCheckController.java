@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HealthCheckController {
+    private final String getHealthDescription =
+            "**Operation** : Check if blog-freak application service is up and running. Successful response returns application version and db version running in production.\n\n";
 
     @Autowired
     private HealthCheckService healthCheckServiceImpl;
@@ -26,7 +28,10 @@ public class HealthCheckController {
     }
 
     @GetMapping("/healthcheck")
-    @Operation(operationId = "getServiceVersion", description = "Get service version", summary = "Get service version")
+    @Operation(
+            operationId = "getServiceVersion",
+            description = getHealthDescription,
+            summary = "Check if blog-freak application service is up and running")
     @ApiResponse(
             responseCode = "200",
             content =
