@@ -7,6 +7,7 @@ import com.blogfreak.blog_freak_api.dto.UpdateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerPasswordDTO;
 import com.blogfreak.blog_freak_api.entity.Authority;
 import com.blogfreak.blog_freak_api.entity.Blogger;
+import com.blogfreak.blog_freak_api.exception.DuplicateBlogger;
 import com.blogfreak.blog_freak_api.exception.InvalidPatchBlogger;
 import com.blogfreak.blog_freak_api.util.Constant;
 import com.blogfreak.blog_freak_api.util.EnumValidation;
@@ -53,6 +54,11 @@ public class BloggerServiceImpl implements BloggerService {
 
     @Transactional
     private Blogger createBloggerHelper(CreateBloggerDTO createBloggerDTORequest) {
+        Blogger bloggerWithSameEmailAddress = this.bloggerDAO.getBloggerByEmail(createBloggerDTORequest.getEmailId());
+        if (bloggerWithSameEmailAddress != null) {
+            throw new DuplicateBlogger(
+                    String.format("Blogger with emailId %s already exists", createBloggerDTORequest.getEmailId()));
+        }
         Blogger blogger = new Blogger();
         blogger.setId(StringUtility.generateIdForEntity());
         blogger.setFirstName(createBloggerDTORequest.getFirstName());
