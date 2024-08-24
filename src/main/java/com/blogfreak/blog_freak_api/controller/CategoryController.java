@@ -4,10 +4,7 @@ import com.blogfreak.blog_freak_api.dto.CreateCategoryDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateCategoryDTO;
 import com.blogfreak.blog_freak_api.entity.Category;
 import com.blogfreak.blog_freak_api.exception.RateLimitExceeded;
-import com.blogfreak.blog_freak_api.oas.schema.error.Exception400;
-import com.blogfreak.blog_freak_api.oas.schema.error.Exception404;
-import com.blogfreak.blog_freak_api.oas.schema.error.Exception429;
-import com.blogfreak.blog_freak_api.oas.schema.error.Exception500;
+import com.blogfreak.blog_freak_api.oas.schema.error.*;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessCategory;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessListOfAllCategories;
 import com.blogfreak.blog_freak_api.service.CategoryService;
@@ -84,6 +81,12 @@ public class CategoryController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = SuccessListOfAllCategories.class)))
     @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
             responseCode = "429",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
     @ApiResponse(
@@ -105,6 +108,12 @@ public class CategoryController {
             responseCode = "200",
             content =
                     @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessCategory.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
     @ApiResponse(
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
@@ -135,6 +144,12 @@ public class CategoryController {
             responseCode = "400",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception400.class)))
     @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
             responseCode = "429",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
     @ApiResponse(
@@ -156,12 +171,18 @@ public class CategoryController {
             summary = "Delete a category from the blog-freak application")
     @Tag(name = "Categories")
     @ApiResponse(
-            responseCode = "410",
-            content =
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessCategory.class)))
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
     @ApiResponse(
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "410",
+            content =
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessCategory.class)))
     @ApiResponse(
             responseCode = "429",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
@@ -187,6 +208,12 @@ public class CategoryController {
     @ApiResponse(
             responseCode = "400",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception400.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
     @ApiResponse(
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))

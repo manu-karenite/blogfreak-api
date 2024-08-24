@@ -78,6 +78,12 @@ public class BloggerController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = SuccessListOfAllBloggers.class)))
     @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
             responseCode = "429",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
     @ApiResponse(
@@ -98,6 +104,12 @@ public class BloggerController {
     @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlogger.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
     @ApiResponse(
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
@@ -126,6 +138,12 @@ public class BloggerController {
     @ApiResponse(
             responseCode = "400",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception400.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
     @ApiResponse(
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
@@ -157,6 +175,12 @@ public class BloggerController {
     @ApiResponse(
             responseCode = "400",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception400.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
     @ApiResponse(
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
