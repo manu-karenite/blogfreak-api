@@ -20,4 +20,6 @@ public interface BlogService {
     public Blog likeUnlikeABlogByBlogId(final String blogId, final String bloggerId);
 
     GetLikesForBlogDTO getLikesForBlog(String blogId);
+
+    public List<Blog> getListOfBlogsForBlogger(final String bloggerId);
 }

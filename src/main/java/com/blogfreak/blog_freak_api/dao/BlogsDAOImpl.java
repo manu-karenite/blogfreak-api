@@ -1,6 +1,7 @@
 package com.blogfreak.blog_freak_api.dao;
 
 import com.blogfreak.blog_freak_api.entity.Blog;
+import com.blogfreak.blog_freak_api.entity.Blogger;
 import com.blogfreak.blog_freak_api.exception.BlogNotFound;
 import com.blogfreak.blog_freak_api.exception.ForbiddenException;
 import jakarta.persistence.EntityManager;
@@ -68,6 +69,13 @@ public class BlogsDAOImpl implements BlogsDAO {
         // Merge the new categories mappings to the BlogMapCategory Entity
         this.entityManager.merge(tobeUpdatedBlog);
         return tobeUpdatedBlog;
+    }
+
+    @Override
+    public List<Blog> getListOfBlogsForBlogger(String bloggerId, Blogger blogger) {
+        TypedQuery<Blog> query = this.entityManager.createNamedQuery("Blog.getBlogsForBlogger", Blog.class);
+        query.setParameter("blogger", blogger);
+        return query.getResultList();
     }
 
     public List<Blog> getListOfAllBlogsInListOfCategories(final Set<String> categoryIdsSet) {
