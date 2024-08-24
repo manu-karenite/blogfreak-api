@@ -120,7 +120,7 @@ public class BlogServiceImpl implements BlogService {
                 && categoryIdList == null) {
             throw new InvalidPatchBlog("One of the allowed properties [title/content/urlAttachment] is mandatory");
         }
-        if (categoryIdList.isEmpty())
+        if (categoryIdList == null || categoryIdList.isEmpty())
             throw new InvalidPatchBlog("categoryIdList should either be not present or be non-empty");
         Blog toBeUpdatedBlog = getBlogById(blogId);
         if (!StringUtils.isEmpty(newBlogTitle)) toBeUpdatedBlog.setTitle(newBlogTitle);
