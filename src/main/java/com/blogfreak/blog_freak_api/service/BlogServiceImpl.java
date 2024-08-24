@@ -16,6 +16,7 @@ import com.blogfreak.blog_freak_api.util.Constant;
 import com.blogfreak.blog_freak_api.util.StringUtility;
 import jakarta.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -48,12 +49,19 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<Blog> getAllBlogs(String categoryIdsAsCommaSeparated) {
+    public List<Blog> getAllBlogs(String categoryIdsAsCommaSeparated, String bloggerId) {
+        if (!bloggerId.equalsIgnoreCase("")) this.bloggerDAO.getBloggerById(bloggerId);
         if (categoryIdsAsCommaSeparated.equalsIgnoreCase("")) return blogsDAOImpl.getAllBlogs();
         final String[] categoryIdsList = categoryIdsAsCommaSeparated.split(Constant.COMMA);
         Set<String> categoryIdsSet = new HashSet<>();
         for (String categoryId : categoryIdsList) categoryIdsSet.add(categoryId);
-        return blogsDAOImpl.getListOfAllBlogsInListOfCategories(categoryIdsSet);
+        List<Blog> blogList = blogsDAOImpl.getListOfAllBlogsInListOfCategories(categoryIdsSet);
+        if (!bloggerId.equalsIgnoreCase(""))
+            return blogList.stream()
+                    .filter(blog -> blog.getBlogger().getId().equalsIgnoreCase(bloggerId))
+                    .collect(Collectors.toList());
+
+        return blogList;
     }
 
     @Override
