@@ -3,6 +3,7 @@ package com.blogfreak.blog_freak_api.controller;
 import com.blogfreak.blog_freak_api.dto.CreateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.LoginDTO;
 import com.blogfreak.blog_freak_api.entity.Blogger;
+import com.blogfreak.blog_freak_api.exception.RateLimitExceeded;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception400;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception401;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception404;
@@ -10,9 +11,9 @@ import com.blogfreak.blog_freak_api.oas.schema.error.Exception500;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessBlogger;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessLogin;
 import com.blogfreak.blog_freak_api.service.AuthenticationService;
-import com.blogfreak.blog_freak_api.service.AuthenticationServiceImpl;
 import com.blogfreak.blog_freak_api.service.BloggerService;
 import com.blogfreak.blog_freak_api.util.Constant;
+import com.google.common.util.concurrent.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -51,13 +52,33 @@ public class AuthenticationController {
     @Autowired
     BloggerService bloggerService;
 
+    @Autowired
+    RateLimiter getRateLimiter;
+
+    @Autowired
+    RateLimiter postRateLimiter;
+
+    @Autowired
+    RateLimiter patchRateLimiter;
+
+    @Autowired
+    RateLimiter deleteRateLimiter;
+
     public AuthenticationController(
-            AuthenticationServiceImpl authenticationServiceImpl,
+            AuthenticationService authenticationService,
             AuthenticationManager authenticationManager,
-            BloggerService bloggerService) {
-        this.authenticationService = authenticationServiceImpl;
+            BloggerService bloggerService,
+            RateLimiter getRateLimiter,
+            RateLimiter postRateLimiter,
+            RateLimiter patchRateLimiter,
+            RateLimiter deleteRateLimiter) {
+        this.authenticationService = authenticationService;
         this.authenticationManager = authenticationManager;
         this.bloggerService = bloggerService;
+        this.getRateLimiter = getRateLimiter;
+        this.postRateLimiter = postRateLimiter;
+        this.patchRateLimiter = patchRateLimiter;
+        this.deleteRateLimiter = deleteRateLimiter;
     }
 
     @PostMapping("/login")
@@ -83,6 +104,7 @@ public class AuthenticationController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     @SecurityRequirements(value = {})
     public ResponseEntity<GlobalResponseEntity> loginUser(@Validated @RequestBody LoginDTO loginDTO) {
+        if (!postRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         Authentication authentication =
                 UsernamePasswordAuthenticationToken.unauthenticated(loginDTO.getEmailId(), loginDTO.getPassword());
         authentication = authenticationManager.authenticate(authentication);
@@ -120,6 +142,7 @@ public class AuthenticationController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     @SecurityRequirements(value = {})
     public ResponseEntity<GlobalResponseEntity> createBlogger(@Valid @RequestBody CreateBloggerDTO createBloggerDTO) {
+        if (!postRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         Blogger blogger = bloggerService.createBlogger(createBloggerDTO);
         Blogger refreshedBlogger = bloggerService.getBloggerById(blogger.getId());
         return new ResponseEntity<>(
