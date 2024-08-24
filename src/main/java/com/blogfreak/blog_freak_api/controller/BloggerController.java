@@ -3,11 +3,13 @@ package com.blogfreak.blog_freak_api.controller;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBloggerPasswordDTO;
 import com.blogfreak.blog_freak_api.entity.Blogger;
+import com.blogfreak.blog_freak_api.exception.RateLimitExceeded;
 import com.blogfreak.blog_freak_api.oas.schema.error.*;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessBlogger;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessListOfAllBloggers;
 import com.blogfreak.blog_freak_api.service.BloggerService;
 import com.blogfreak.blog_freak_api.util.Constant;
+import com.google.common.util.concurrent.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,8 +41,29 @@ public class BloggerController {
     @Autowired
     BloggerService bloggerService;
 
-    public BloggerController(BloggerService bloggerService) {
+    @Autowired
+    RateLimiter getRateLimiter;
+
+    @Autowired
+    RateLimiter postRateLimiter;
+
+    @Autowired
+    RateLimiter patchRateLimiter;
+
+    @Autowired
+    RateLimiter deleteRateLimiter;
+
+    public BloggerController(
+            BloggerService bloggerService,
+            RateLimiter getRateLimiter,
+            RateLimiter postRateLimiter,
+            RateLimiter patchRateLimiter,
+            RateLimiter deleteRateLimiter) {
         this.bloggerService = bloggerService;
+        this.getRateLimiter = getRateLimiter;
+        this.postRateLimiter = postRateLimiter;
+        this.patchRateLimiter = patchRateLimiter;
+        this.deleteRateLimiter = deleteRateLimiter;
     }
 
     @GetMapping("/bloggers")
@@ -59,6 +82,7 @@ public class BloggerController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     @Tag(name = "Bloggers")
     public ResponseEntity<GlobalResponseEntity> getAllBloggers() {
+        if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         return new ResponseEntity<>(
                 new GlobalResponseEntity<>(HttpStatus.OK, bloggerService.getAllBloggers()), HttpStatus.OK);
     }
@@ -79,6 +103,7 @@ public class BloggerController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     @Tag(name = "Bloggers")
     public ResponseEntity<GlobalResponseEntity> getBloggerById(@PathVariable @NotNull @Size(min = 1) String bloggerId) {
+        if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         return new ResponseEntity<>(
                 new GlobalResponseEntity<>(HttpStatus.OK, bloggerService.getBloggerById(bloggerId)), HttpStatus.OK);
     }
@@ -103,6 +128,7 @@ public class BloggerController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> updateBlogger(
             @RequestBody @Valid UpdateBloggerDTO updateBloggerDTORequest, final Principal principal) {
+        if (!patchRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         final String bloggerId = principal.getName();
         return new ResponseEntity<>(
                 new GlobalResponseEntity<>(
@@ -130,6 +156,7 @@ public class BloggerController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> updateBloggerPassword(
             @RequestBody @Valid UpdateBloggerPasswordDTO updateBloggerPasswordDTORequest, final Principal principal) {
+        if (!patchRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         final String bloggerId = principal.getName();
         return new ResponseEntity<>(
                 new GlobalResponseEntity<>(
@@ -161,6 +188,7 @@ public class BloggerController {
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> deleteBlogger(final Principal principal) {
+        if (!deleteRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         final String bloggerId = principal.getName();
         final Blogger deletedBlogger = this.bloggerService.deleteBlogger(bloggerId);
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.GONE, deletedBlogger), HttpStatus.GONE);

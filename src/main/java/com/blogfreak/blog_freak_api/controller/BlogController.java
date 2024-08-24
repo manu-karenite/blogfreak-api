@@ -4,12 +4,14 @@ import com.blogfreak.blog_freak_api.dto.CreateBlogDTO;
 import com.blogfreak.blog_freak_api.dto.GetLikesForBlogDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateBlogDTO;
 import com.blogfreak.blog_freak_api.entity.Blog;
+import com.blogfreak.blog_freak_api.exception.RateLimitExceeded;
 import com.blogfreak.blog_freak_api.oas.schema.error.*;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessBlog;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessGetLikesForBlog;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessListOfAllBlogs;
 import com.blogfreak.blog_freak_api.service.BlogServiceImpl;
 import com.blogfreak.blog_freak_api.util.Constant;
+import com.google.common.util.concurrent.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -43,8 +45,29 @@ public class BlogController {
     @Autowired
     private BlogServiceImpl blogServiceImpl;
 
-    public BlogController(BlogServiceImpl blogService) {
-        this.blogServiceImpl = blogService;
+    @Autowired
+    RateLimiter getRateLimiter;
+
+    @Autowired
+    RateLimiter postRateLimiter;
+
+    @Autowired
+    RateLimiter patchRateLimiter;
+
+    @Autowired
+    RateLimiter deleteRateLimiter;
+
+    public BlogController(
+            BlogServiceImpl blogServiceImpl,
+            RateLimiter getRateLimiter,
+            RateLimiter postRateLimiter,
+            RateLimiter patchRateLimiter,
+            RateLimiter deleteRateLimiter) {
+        this.blogServiceImpl = blogServiceImpl;
+        this.getRateLimiter = getRateLimiter;
+        this.postRateLimiter = postRateLimiter;
+        this.patchRateLimiter = patchRateLimiter;
+        this.deleteRateLimiter = deleteRateLimiter;
     }
 
     @GetMapping("/blogs")
@@ -65,6 +88,7 @@ public class BlogController {
     public ResponseEntity<GlobalResponseEntity> getAllBlogs(
             @RequestParam(name = "categoryIds", required = false, defaultValue = "") String categoryIds,
             @RequestParam(name = "bloggerId", required = false, defaultValue = "") String bloggerId) {
+        if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         GlobalResponseEntity globalResponseEntity =
                 new GlobalResponseEntity(HttpStatus.OK, blogServiceImpl.getAllBlogs(categoryIds, bloggerId));
         return new ResponseEntity<>(globalResponseEntity, HttpStatus.OK);
@@ -86,6 +110,7 @@ public class BlogController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     @Tag(name = "Blogs")
     public ResponseEntity<GlobalResponseEntity> getBlogById(@PathVariable @NotNull @Size(min = 1) String blogId) {
+        if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         GlobalResponseEntity globalResponseEntity =
                 new GlobalResponseEntity(HttpStatus.OK, blogServiceImpl.getBlogById(blogId));
         return new ResponseEntity<>(globalResponseEntity, HttpStatus.OK);
@@ -113,6 +138,7 @@ public class BlogController {
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> createBlog(@Valid @RequestBody CreateBlogDTO createBlogDTO) {
+        if (!postRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         Blog blog = blogServiceImpl.createBlog(createBlogDTO);
         Blog refreshedBlog = blogServiceImpl.getBlogById(blog.getId());
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.CREATED, refreshedBlog), HttpStatus.CREATED);
@@ -141,6 +167,7 @@ public class BlogController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> deleteBlogByBlogId(
             @Valid @NotNull @Size(min = 30) @PathVariable final String blogId, final Principal principal) {
+        if (!deleteRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         final Blog deletedBlog = this.blogServiceImpl.deleteBlogByblogId(blogId, principal.getName());
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.GONE, deletedBlog), HttpStatus.GONE);
     }
@@ -173,6 +200,7 @@ public class BlogController {
             @Valid @NotNull @Size(min = 30) @PathVariable final String blogId,
             @RequestBody @Valid UpdateBlogDTO updateBlogDTO,
             final Principal principal) {
+        if (!patchRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         final String bloggerId = principal.getName();
         this.blogServiceImpl.updateBlogByblogId(blogId, updateBlogDTO, bloggerId);
         final Blog refreshedBlog = this.blogServiceImpl.getBlogById(blogId);
@@ -205,6 +233,7 @@ public class BlogController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> likeUnlikeABlogByBlogId(
             @Valid @NotNull @Size(min = 30) @PathVariable final String blogId, final Principal principal) {
+        if (!patchRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         final String bloggerId = principal.getName();
         this.blogServiceImpl.likeUnlikeABlogByBlogId(blogId, bloggerId);
         final Blog refreshedBlog = this.blogServiceImpl.getBlogById(blogId);
@@ -240,6 +269,7 @@ public class BlogController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> getLikesForBlog(
             @Valid @NotNull @Size(min = 30) @PathVariable final String blogId) {
+        if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         GetLikesForBlogDTO getLikesForBlogDTO = this.blogServiceImpl.getLikesForBlog(blogId);
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, getLikesForBlogDTO), HttpStatus.OK);
     }

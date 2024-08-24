@@ -1,8 +1,10 @@
 package com.blogfreak.blog_freak_api.controller;
 
+import com.blogfreak.blog_freak_api.exception.RateLimitExceeded;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception500;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessHealthCheck;
 import com.blogfreak.blog_freak_api.service.HealthCheckService;
+import com.google.common.util.concurrent.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,14 +19,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HealthCheckController {
+    @Autowired
+    RateLimiter getRateLimiter;
+
     private final String getHealthDescription =
             "**Operation** : Check if blog-freak application service is up and running. Successful response returns application version and db version running in production.\n\n";
 
     @Autowired
     private HealthCheckService healthCheckServiceImpl;
 
-    public HealthCheckController(HealthCheckService healthCheckServiceImpl) {
+    public HealthCheckController(HealthCheckService healthCheckServiceImpl, RateLimiter getRateLimiter) {
         this.healthCheckServiceImpl = healthCheckServiceImpl;
+        this.getRateLimiter = getRateLimiter;
     }
 
     @GetMapping("/healthcheck")
@@ -44,6 +50,7 @@ public class HealthCheckController {
     @Tag(name = "Health Check")
     @SecurityRequirements(value = {})
     public ResponseEntity<GlobalResponseEntity> getServiceVersion() {
+        if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         return new ResponseEntity<>(
                 new GlobalResponseEntity(HttpStatus.OK, healthCheckServiceImpl.getServiceVersion()), HttpStatus.OK);
     }

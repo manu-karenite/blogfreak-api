@@ -59,6 +59,14 @@ public class CommonExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<GlobalExceptionResponse> handleRateLimitExceededException(RateLimitExceeded e) {
+        final String errorMessage = "Rate limit exceeded. Please try again in 1 minute.";
+        GlobalExceptionResponse globalExceptionResponse =
+                new GlobalExceptionResponse(HttpStatus.TOO_MANY_REQUESTS, errorMessage);
+        return new ResponseEntity<>(globalExceptionResponse, HttpStatus.TOO_MANY_REQUESTS);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<GlobalExceptionResponse> handleResponseForDuplicateBlogger(DuplicateEntity e) {
         GlobalExceptionResponse globalExceptionResponse =
                 new GlobalExceptionResponse(HttpStatus.BAD_REQUEST, e.getMessage());

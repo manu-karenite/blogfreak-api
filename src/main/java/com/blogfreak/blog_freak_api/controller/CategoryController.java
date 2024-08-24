@@ -3,6 +3,7 @@ package com.blogfreak.blog_freak_api.controller;
 import com.blogfreak.blog_freak_api.dto.CreateCategoryDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateCategoryDTO;
 import com.blogfreak.blog_freak_api.entity.Category;
+import com.blogfreak.blog_freak_api.exception.RateLimitExceeded;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception400;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception404;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception500;
@@ -10,6 +11,7 @@ import com.blogfreak.blog_freak_api.oas.schema.success.SuccessCategory;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessListOfAllCategories;
 import com.blogfreak.blog_freak_api.service.CategoryService;
 import com.blogfreak.blog_freak_api.util.Constant;
+import com.google.common.util.concurrent.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,8 +46,29 @@ public class CategoryController {
     @Autowired
     CategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService) {
+    @Autowired
+    RateLimiter getRateLimiter;
+
+    @Autowired
+    RateLimiter postRateLimiter;
+
+    @Autowired
+    RateLimiter patchRateLimiter;
+
+    @Autowired
+    RateLimiter deleteRateLimiter;
+
+    public CategoryController(
+            CategoryService categoryService,
+            RateLimiter getRateLimiter,
+            RateLimiter postRateLimiter,
+            RateLimiter patchRateLimiter,
+            RateLimiter deleteRateLimiter) {
         this.categoryService = categoryService;
+        this.getRateLimiter = getRateLimiter;
+        this.postRateLimiter = postRateLimiter;
+        this.patchRateLimiter = patchRateLimiter;
+        this.deleteRateLimiter = deleteRateLimiter;
     }
 
     @GetMapping("/categories")
@@ -64,6 +87,7 @@ public class CategoryController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     @Tag(name = "Categories")
     public ResponseEntity<GlobalResponseEntity> getAllCategories() {
+        if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         return new ResponseEntity<>(
                 new GlobalResponseEntity<>(HttpStatus.OK, categoryService.getAllCategories()), HttpStatus.OK);
     }
@@ -85,6 +109,7 @@ public class CategoryController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     @Tag(name = "Categories")
     public ResponseEntity<GlobalResponseEntity> getCategoryById(@PathVariable String categoryId) {
+        if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         return new ResponseEntity<>(
                 new GlobalResponseEntity<>(HttpStatus.OK, categoryService.getCategoryById(categoryId)), HttpStatus.OK);
     }
@@ -107,6 +132,7 @@ public class CategoryController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> createCategory(
             @Valid @RequestBody CreateCategoryDTO createCategoryDTORequest) {
+        if (!postRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         return new ResponseEntity<>(
                 new GlobalResponseEntity<>(
                         HttpStatus.CREATED, categoryService.createCategory(createCategoryDTORequest)),
@@ -130,6 +156,7 @@ public class CategoryController {
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> deleteCategory(@PathVariable String categoryId) {
+        if (!deleteRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         Category deletedCategory = categoryService.deleteCategory(categoryId);
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.GONE, deletedCategory), HttpStatus.GONE);
     }
@@ -155,6 +182,7 @@ public class CategoryController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> updateCategory(
             @PathVariable String categoryId, @Valid @RequestBody UpdateCategoryDTO updateCategoryDTO) {
+        if (!patchRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         Category updatedCategory = categoryService.updateCategory(categoryId, updateCategoryDTO);
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, updatedCategory), HttpStatus.OK);
     }
