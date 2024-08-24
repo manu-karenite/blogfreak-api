@@ -53,4 +53,13 @@ public class CategoryDAOImpl implements CategoryDAO {
         entityManager.merge(category);
         return category;
     }
+
+    @Override
+    public Category getCategoryByName(String categoryName) {
+        TypedQuery<Category> query = this.entityManager.createNamedQuery("Category.findByName", Category.class);
+        query.setParameter("categoryName", categoryName);
+        List<Category> categoryList = query.getResultList();
+        if (categoryList == null || categoryList.size() == 0) return null;
+        return categoryList.get(0);
+    }
 }
