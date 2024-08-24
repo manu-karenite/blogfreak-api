@@ -13,4 +13,6 @@ public interface CategoryDAO {
     public Category getCategoryById(String categoryId);
 
     public Category updateCategory(Category category);
+
+    public Category getCategoryByName(final String categoryName);
 }

@@ -4,6 +4,7 @@ import com.blogfreak.blog_freak_api.dao.CategoryDAO;
 import com.blogfreak.blog_freak_api.dto.CreateCategoryDTO;
 import com.blogfreak.blog_freak_api.dto.UpdateCategoryDTO;
 import com.blogfreak.blog_freak_api.entity.Category;
+import com.blogfreak.blog_freak_api.exception.DuplicateEntity;
 import com.blogfreak.blog_freak_api.util.StringUtility;
 import jakarta.transaction.Transactional;
 import java.util.Date;
@@ -28,6 +29,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public Category createCategory(CreateCategoryDTO createCategoryDTORequest) {
+        if (this.categoryDAO.getCategoryByName(createCategoryDTORequest.getName()) != null) {
+            throw new DuplicateEntity(
+                    String.format("Category with name [%s] already exists", createCategoryDTORequest.getName()));
+        }
         Category category = new Category();
         category.setName(createCategoryDTORequest.getName());
         category.setId(StringUtility.generateIdForEntity());

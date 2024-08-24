@@ -59,7 +59,7 @@ public class CommonExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<GlobalExceptionResponse> handleResponseForDuplicateBlogger(DuplicateBlogger e) {
+    public ResponseEntity<GlobalExceptionResponse> handleResponseForDuplicateBlogger(DuplicateEntity e) {
         GlobalExceptionResponse globalExceptionResponse =
                 new GlobalExceptionResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(globalExceptionResponse, HttpStatus.BAD_REQUEST);
