@@ -1,6 +1,7 @@
 package com.blogfreak.blog_freak_api.controller;
 
 import com.blogfreak.blog_freak_api.exception.RateLimitExceeded;
+import com.blogfreak.blog_freak_api.oas.schema.error.Exception429;
 import com.blogfreak.blog_freak_api.oas.schema.error.Exception500;
 import com.blogfreak.blog_freak_api.oas.schema.success.SuccessHealthCheck;
 import com.blogfreak.blog_freak_api.service.HealthCheckService;
@@ -44,6 +45,9 @@ public class HealthCheckController {
                     @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = SuccessHealthCheck.class)))
+    @ApiResponse(
+            responseCode = "429",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
     @ApiResponse(
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))

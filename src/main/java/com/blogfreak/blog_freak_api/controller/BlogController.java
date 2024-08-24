@@ -82,6 +82,9 @@ public class BlogController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = SuccessListOfAllBlogs.class)))
     @ApiResponse(
+            responseCode = "429",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
+    @ApiResponse(
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     @Tag(name = "Blogs")
@@ -105,6 +108,9 @@ public class BlogController {
     @ApiResponse(
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "429",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
     @ApiResponse(
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
@@ -135,6 +141,9 @@ public class BlogController {
             responseCode = "403",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
     @ApiResponse(
+            responseCode = "429",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
+    @ApiResponse(
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> createBlog(@Valid @RequestBody CreateBlogDTO createBlogDTO) {
@@ -162,6 +171,9 @@ public class BlogController {
     @ApiResponse(
             responseCode = "410",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlog.class)))
+    @ApiResponse(
+            responseCode = "429",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
     @ApiResponse(
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
@@ -193,6 +205,9 @@ public class BlogController {
     @ApiResponse(
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "429",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
     @ApiResponse(
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
@@ -229,6 +244,9 @@ public class BlogController {
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
     @ApiResponse(
+            responseCode = "429",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
+    @ApiResponse(
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
     public ResponseEntity<GlobalResponseEntity> likeUnlikeABlogByBlogId(
@@ -264,6 +282,9 @@ public class BlogController {
     @ApiResponse(
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "429",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
     @ApiResponse(
             responseCode = "500",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
