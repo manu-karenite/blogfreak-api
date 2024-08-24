@@ -39,6 +39,8 @@ public class AppSecurityConfig {
                 .hasAuthority(Constant.AUTHORITY_READ)
                 .requestMatchers(HttpMethod.GET, "/bloggers")
                 .hasAuthority(Constant.AUTHORITY_READ)
+                .requestMatchers(HttpMethod.GET, "/blogger/profile")
+                .hasAuthority(Constant.AUTHORITY_READ)
                 // -------------------------------- Category Related Endpoint -------------------------------- //
                 .requestMatchers(HttpMethod.POST, "/categories")
                 .hasAuthority(Constant.AUTHORITY_ADMIN)

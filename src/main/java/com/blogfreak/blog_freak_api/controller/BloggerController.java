@@ -37,6 +37,8 @@ public class BloggerController {
             "**Operation** : Update a blogger's password belonging to the current logged-in blogger\n\n";
     private final String deleteBloggerPasswordDescription =
             "**Operation** : Delete a blogger's profile from blog-freak application belonging to the current logged-in blogger\n\n";
+    private final String getBloggerProfileDescription =
+            "**Operation** : Get the blogger's profile from blog-freak application belonging to the current logged-in blogger\n\n";
 
     @Autowired
     BloggerService bloggerService;
@@ -231,5 +233,33 @@ public class BloggerController {
         final String bloggerId = principal.getName();
         final Blogger deletedBlogger = this.bloggerService.deleteBlogger(bloggerId);
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.GONE, deletedBlogger), HttpStatus.GONE);
+    }
+
+    @GetMapping("/blogger/profile")
+    @Operation(
+            operationId = "getLoggedInBloggerProfile",
+            description = getBloggerProfileDescription + Constant.OAS_READ_AUTH,
+            summary = "Get profile details of the current logged-in blogger")
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlogger.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
+            responseCode = "429",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
+    @ApiResponse(
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
+    @Tag(name = "Bloggers")
+    public ResponseEntity<GlobalResponseEntity> getBloggerProfile(final Principal principal) {
+        if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
+        return new ResponseEntity<>(
+                new GlobalResponseEntity<>(HttpStatus.OK, bloggerService.getBloggerById(principal.getName())),
+                HttpStatus.OK);
     }
 }
