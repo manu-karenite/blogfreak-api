@@ -14,6 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@NamedQuery(name = "Blog.getBlogsForBlogger", query = "from Blog b where b.blogger=:blogger")
 public class Blog {
     @Id
     @Column(name = Constant.ID)

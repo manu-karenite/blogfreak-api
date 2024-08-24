@@ -175,4 +175,10 @@ public class BlogServiceImpl implements BlogService {
         getLikesForBlogDTO.setListOfLikesWithBloggerIds(listOfLikesForBlogWithBloggerId);
         return getLikesForBlogDTO;
     }
+
+    @Override
+    public List<Blog> getListOfBlogsForBlogger(String bloggerId) {
+        Blogger blogger = this.bloggerDAO.getBloggerById(bloggerId);
+        return this.blogsDAOImpl.getListOfBlogsForBlogger(bloggerId, blogger);
+    }
 }

@@ -41,6 +41,8 @@ public class BlogController {
             "**Operation** : Like or unlike an existing blog identified using blogId. If the logged-in blogger has not yet liked the blog, a new like will be added for the blog. If the blogger already has a like on the blog, like will be removed\n\n";
     private final String getLikesForABlogDescription =
             "**Operation** : Gets the like statistics for a blog using blogId\n\n";
+    private final String getBlogsForBloggerDescription =
+            "**Operation** : Get list of blogs belonging to a particular blogger using bloggerId\n\n";
 
     @Autowired
     private BlogServiceImpl blogServiceImpl;
@@ -305,5 +307,37 @@ public class BlogController {
         if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
         GetLikesForBlogDTO getLikesForBlogDTO = this.blogServiceImpl.getLikesForBlog(blogId);
         return new ResponseEntity<>(new GlobalResponseEntity<>(HttpStatus.OK, getLikesForBlogDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("/blogs/by-blogger/{bloggerId}")
+    @Operation(
+            operationId = "getBlogsForBloggerId",
+            description = getBlogsForBloggerDescription + Constant.OAS_READ_AUTH,
+            summary = "Get list of blogs belonging to a particular blogger using bloggerId")
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessBlog.class)))
+    @ApiResponse(
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception401.class)))
+    @ApiResponse(
+            responseCode = "403",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception403.class)))
+    @ApiResponse(
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception404.class)))
+    @ApiResponse(
+            responseCode = "429",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception429.class)))
+    @ApiResponse(
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Exception500.class)))
+    @Tag(name = "Blogs")
+    public ResponseEntity<GlobalResponseEntity> getBlogsForBlogger(
+            @PathVariable @NotNull @Size(min = 1) String bloggerId) {
+        if (!getRateLimiter.tryAcquire()) throw new RateLimitExceeded();
+        GlobalResponseEntity globalResponseEntity =
+                new GlobalResponseEntity(HttpStatus.OK, blogServiceImpl.getListOfBlogsForBlogger(bloggerId));
+        return new ResponseEntity<>(globalResponseEntity, HttpStatus.OK);
     }
 }
