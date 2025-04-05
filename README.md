@@ -1,4 +1,4 @@
-# 🌐 BlogFreak API
+# 🌐 BlogFreak API Backend
 Live on : **http://18.223.31.27:8765/api/v1/swagger-ui/index.html#/**
 
 BlogFreak API is a comprehensive **backend service** designed to manage **blog content**, **user authentication**, and more. Built with **Spring Boot**, it provides a robust, scalable RESTful API, leveraging **AWS servic**es for deployment and database management.
